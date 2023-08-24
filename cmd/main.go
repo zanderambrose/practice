@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"practice/pkg/api"
@@ -18,7 +17,7 @@ func main() {
 	}
 
 	defer func() {
-		if err := client.Disconnect(context.Background()); err != nil {
+		if err := client.Disconnect(utils.CTX); err != nil {
 			panic(err)
 		}
 	}()
