@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 	"practice/pkg/models"
 	"practice/pkg/utils"
 )
@@ -23,29 +22,6 @@ func main() {
 	if err != nil {
 		fmt.Println("Failed to connect to MongoDB :", err)
 	}
-
-	app.Get("/api/v1", func(c *fiber.Ctx) error {
-		cursor, err := utils.GetCollection(client, "people").Find(utils.CTX, bson.D{})
-		if err != nil {
-			fmt.Println("Error finding documents")
-		}
-
-		defer cursor.Close(utils.CTX)
-
-		var results []models.Person
-		if err := cursor.All(utils.CTX, &results); err != nil {
-			fmt.Println("Error ", err)
-		}
-
-		if err := cursor.Err(); err != nil {
-			fmt.Println("Error ", err)
-		}
-
-		response := map[string]interface{}{
-			"people": results,
-		}
-		return c.JSON(response)
-	})
 
 	app.Post("/api/v1/person", func(c *fiber.Ctx) error {
 		var payload models.Person
