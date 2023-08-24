@@ -19,7 +19,7 @@ func InitClient(client *mongo.Client) *MongoClient {
 	}
 }
 
-func (client *MongoClient) GetAllUser(c *fiber.Ctx) error {
+func (client *MongoClient) GetAllUsers(c *fiber.Ctx) error {
 	cursor, err := utils.GetCollection(client.MongoClient, "people").Find(utils.CTX, bson.D{})
 	if err != nil {
 		fmt.Println("Error finding documents")
@@ -40,4 +40,32 @@ func (client *MongoClient) GetAllUser(c *fiber.Ctx) error {
 		"people": results,
 	}
 	return c.JSON(response)
+}
+
+func (client *MongoClient) CreateUser(c *fiber.Ctx) error {
+	var payload models.Person
+
+	if err := c.BodyParser(&payload); err != nil {
+		fmt.Println("error parsing: ", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Bad request",
+		})
+	}
+
+	payload.IsAdult = utils.IsAdult(payload.Age)
+
+	id, err := utils.GetCollection(client.MongoClient, "people").InsertOne(utils.CTX, payload)
+	fmt.Println("id: ", *id)
+	if err != nil {
+		fmt.Println("INSERT ONE ERROR", err)
+	}
+
+	personMap := map[string]interface{}{
+		"name":    payload.Name,
+		"age":     payload.Age,
+		"isAdult": payload.IsAdult,
+		"id":      *id,
+	}
+
+	return c.JSON(personMap)
 }

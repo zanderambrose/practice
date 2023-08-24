@@ -7,5 +7,6 @@ import (
 
 func ApplyRoutes(app *fiber.App, client *mongo.Client) {
 	withClient := InitClient(client)
-	app.Get("/api/v1", withClient.GetAllUser)
+	app.Get("/api/v1", withClient.GetAllUsers)
+	app.Post("/api/v1/person", withClient.CreateUser)
 }
