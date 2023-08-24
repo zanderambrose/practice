@@ -3,26 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	// "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"practice/pkg/models"
 	"practice/pkg/utils"
 )
-
-type Person struct {
-	Name    string `json:"name" bson:"name"`
-	Age     int    `json:"age" bson:"age"`
-	IsAdult bool   `json:"isAdult" bson:"isAdult"`
-}
-
-func isAdult(age int) bool {
-	if age < 18 {
-		return false
-	}
-	return true
-}
 
 func main() {
 	app := fiber.New()
@@ -34,20 +19,21 @@ func main() {
 			panic(err)
 		}
 	}()
+
 	if err != nil {
 		fmt.Println("Failed to connect to MongoDB :", err)
 	}
 
 	app.Get("/api/v1", func(c *fiber.Ctx) error {
-		cursor, err := utils.GetCollection(client, "people").Find(ctx, bson.D{})
+		cursor, err := utils.GetCollection(client, "people").Find(utils.CTX, bson.D{})
 		if err != nil {
 			fmt.Println("Error finding documents")
 		}
 
-		defer cursor.Close(ctx)
+		defer cursor.Close(utils.CTX)
 
-		var results []Person
-		if err := cursor.All(ctx, &results); err != nil {
+		var results []models.Person
+		if err := cursor.All(utils.CTX, &results); err != nil {
 			fmt.Println("Error ", err)
 		}
 
@@ -62,7 +48,7 @@ func main() {
 	})
 
 	app.Post("/api/v1/person", func(c *fiber.Ctx) error {
-		var payload Person
+		var payload models.Person
 
 		if err := c.BodyParser(&payload); err != nil {
 			fmt.Println("error parsing: ", err)
@@ -71,9 +57,9 @@ func main() {
 			})
 		}
 
-		payload.IsAdult = isAdult(payload.Age)
+		payload.IsAdult = utils.IsAdult(payload.Age)
 
-		id, err := getCollection(client, "people").InsertOne(ctx, payload)
+		id, err := utils.GetCollection(client, "people").InsertOne(utils.CTX, payload)
 		fmt.Println("id: ", *id)
 		if err != nil {
 			fmt.Println("INSERT ONE ERROR", err)

@@ -1,20 +1,20 @@
 package utils
 
 import (
-	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"practice/pkg/models"
 )
 
 func InitDB() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI("mongodb://root:examplepassword@localhost:27017")
-	c, err := mongo.Connect(context.Background(), clientOptions)
+	c, err := mongo.Connect(CTX, clientOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.Ping(context.Background(), nil)
+	err = c.Ping(CTX, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func InitDB() (*mongo.Client, error) {
 	return c, nil
 }
 
-func InsertOne(person *Person, coll *mongo.Collection) (*mongo.InsertOneResult, error) {
+func InsertOne(person *models.Person, coll *mongo.Collection) (*mongo.InsertOneResult, error) {
 	result, err := coll.InsertOne(CTX, person)
 	if err != nil {
 		fmt.Println(err)
