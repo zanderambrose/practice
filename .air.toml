@@ -1,0 +1,23 @@
+# .air.toml
+
+# List directories you want to be watched for changes.
+root = "."
+tmp_dir = "tmp"
+
+# Exclude directories. They should be relative to the root path.
+exclude_dir = ["pkg/scraper"]
+
+[build]
+  # You can specify the environment variables required for your app.
+  # env = "DEBUG=1"
+
+  # Build command.
+  cmd = "go build -o ./tmp/main ./cmd/api/"
+
+  # Binary file outputs.
+  bin = "./tmp/main"
+
+# Config for running your app.
+[run]
+  # Run command.
+  cmd = "./tmp/main"
