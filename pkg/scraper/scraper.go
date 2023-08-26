@@ -33,11 +33,12 @@ func Scraper() {
 	c.Visit("https://www.smallslive.com/")
 
 	for i, performers := range allPerformers {
-		payload, err := json.Marshal(performers)
-		if err != nil {
-			fmt.Println("error on that marshal mathers", err)
-		}
 		if i == 0 {
+			performers["venue"] = "smalls_early"
+			payload, err := json.Marshal(performers)
+			if err != nil {
+				fmt.Println("error on that marshal mathers", err)
+			}
 			resp, err := http.Post("http://localhost:8080/api/v1/smalls", "application/json", bytes.NewBuffer(payload))
 
 			if err != nil {
