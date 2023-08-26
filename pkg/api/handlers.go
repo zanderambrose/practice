@@ -69,3 +69,25 @@ func (client *MongoClient) CreateUser(c *fiber.Ctx) error {
 
 	return c.JSON(personMap)
 }
+
+func (client *MongoClient) UpdateLineupV1(c *fiber.Ctx) error {
+	var payload map[string]string
+
+	if err := c.BodyParser(&payload); err != nil {
+		fmt.Println("error parsing: ", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Bad request",
+		})
+	}
+
+	// fmt.Println("payload: ", payload)
+	// fmt.Println("params: ", c.Params("venue"))
+
+	id, err := utils.GetCollection(client.MongoClient, c.Params("venue")).InsertOne(utils.CTX, payload)
+	fmt.Println("id: ", *id)
+	if err != nil {
+		fmt.Println("INSERT ONE ERROR", err)
+	}
+
+	return c.JSON(payload)
+}

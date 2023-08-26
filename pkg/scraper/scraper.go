@@ -1,8 +1,11 @@
 package scraper
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/gocolly/colly"
+	"net/http"
 	"strings"
 )
 
@@ -30,15 +33,28 @@ func Scraper() {
 	c.Visit("https://www.smallslive.com/")
 
 	for i, performers := range allPerformers {
-		if i%2 == 0 {
-			fmt.Println("Smalls")
-		} else {
-			fmt.Println("Mezzrow")
+		payload, err := json.Marshal(performers)
+		if err != nil {
+			fmt.Println("error on that marshal mathers", err)
 		}
-		for performer, instrument := range performers {
-			fmt.Printf("%s: %s;\n", performer, instrument)
+		if i == 0 {
+			resp, err := http.Post("http://localhost:8080/api/v1/smalls", "application/json", bytes.NewBuffer(payload))
+
+			if err != nil {
+				fmt.Println("error on that http req", err)
+			}
+
+			fmt.Println("resp: ", resp)
 		}
-		fmt.Println()
+		// if i%2 == 0 {
+		// 	fmt.Println("Smalls")
+		// } else {
+		// 	fmt.Println("Mezzrow")
+		// }
+		// for performer, instrument := range performers {
+		// 	fmt.Printf("%s: %s;\n", performer, instrument)
+		// }
+		// fmt.Println()
 	}
 
 }

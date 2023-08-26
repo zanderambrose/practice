@@ -1,10 +1,8 @@
 package utils
 
 import (
-	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"practice/pkg/models"
 )
 
 func InitDB() (*mongo.Client, error) {
@@ -22,15 +20,7 @@ func InitDB() (*mongo.Client, error) {
 	return c, nil
 }
 
-func InsertOne(person *models.Person, coll *mongo.Collection) (*mongo.InsertOneResult, error) {
-	result, err := coll.InsertOne(CTX, person)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return result, err
-}
-
 func GetCollection(client *mongo.Client, name string) *mongo.Collection {
-	coll := client.Database("practice").Collection(name)
+	coll := client.Database("whoshittin").Collection(name)
 	return coll
 }
