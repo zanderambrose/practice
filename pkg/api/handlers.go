@@ -13,6 +13,11 @@ type MongoClient struct {
 	MongoClient *mongo.Client
 }
 
+func HelloWorld(c *fiber.Ctx) error {
+	var response = map[string]string{"hello": "world"}
+	return c.JSON(response)
+}
+
 func InitClient(client *mongo.Client) *MongoClient {
 	return &MongoClient{
 		MongoClient: client,
