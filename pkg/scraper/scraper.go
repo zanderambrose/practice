@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func Scraper() {
@@ -33,29 +35,37 @@ func Scraper() {
 	c.Visit("https://www.smallslive.com/")
 
 	for i, performers := range allPerformers {
-		if i == 0 {
-			performers["venue"] = "smalls_early"
-			payload, err := json.Marshal(performers)
-			if err != nil {
-				fmt.Println("error on that marshal mathers", err)
-			}
-			resp, err := http.Post("http://localhost:8080/api/v1/smalls", "application/json", bytes.NewBuffer(payload))
-
-			if err != nil {
-				fmt.Println("error on that http req", err)
-			}
-
-			fmt.Println("resp: ", resp)
+		isEarlySet := isEarlySet(i)
+		currentTime := time.Now()
+		venue := determineVenue(i)
+		performers["isEarlySet"] = strconv.FormatBool(isEarlySet)
+		performers["currentTime"] = currentTime.Format("2006-01-02 15:04:05")
+		performers["venue"] = venue
+		payload, err := json.Marshal(performers)
+		if err != nil {
+			fmt.Println("error on that marshal mathers", err)
 		}
-		// if i%2 == 0 {
-		// 	fmt.Println("Smalls")
-		// } else {
-		// 	fmt.Println("Mezzrow")
-		// }
-		// for performer, instrument := range performers {
-		// 	fmt.Printf("%s: %s;\n", performer, instrument)
-		// }
-		// fmt.Println()
+		resp, err := http.Post(fmt.Sprintf("http://localhost:8080/api/v1/%s", venue), "application/json", bytes.NewBuffer(payload))
+
+		if err != nil {
+			fmt.Println("error on that http req", err)
+		}
+
+		fmt.Println("resp: ", resp)
 	}
 
+}
+
+func isEarlySet(index int) bool {
+	if index > 1 {
+		return false
+	}
+	return true
+}
+
+func determineVenue(index int) string {
+	if index%2 == 0 {
+		return "smalls"
+	}
+	return "mezzrow"
 }
