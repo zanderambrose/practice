@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"net/http"
+	"practice/pkg/utils"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func SmallsLiveScraper(c *colly.Collector) {
@@ -34,10 +34,9 @@ func SmallsLiveScraper(c *colly.Collector) {
 
 	for i, performers := range allPerformers {
 		isEarlySet := isEarlySet(i)
-		currentTime := time.Now()
 		venue := determineVenue(i)
 		performers["isEarlySet"] = strconv.FormatBool(isEarlySet)
-		performers["currentTime"] = currentTime.Format("2006-01-02 15:04:05")
+		utils.AppendCurrentTime(&performers)
 		performers["venue"] = venue
 		payload, err := json.Marshal(performers)
 		if err != nil {
