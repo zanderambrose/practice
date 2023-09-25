@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"fmt"
 	"github.com/gocolly/colly"
 	"practice/pkg/utils"
 	"strings"
