@@ -17,9 +17,6 @@ func Vanguard(c *colly.Collector) {
 			bandName := e.ChildText("h2")
 			data["bandName"] = bandName
 
-			// Add current time
-			utils.AppendCurrentTime(&data)
-
 			// Add band members
 			e.ForEach("h4", func(_ int, bandMember *colly.HTMLElement) {
 				text := bandMember.Text
@@ -31,6 +28,9 @@ func Vanguard(c *colly.Collector) {
 					data[performer] = instrument
 				}
 			})
+
+			// Add current time
+			utils.AppendCurrentTime(&data)
 		}
 
 	})
