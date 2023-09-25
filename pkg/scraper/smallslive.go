@@ -1,11 +1,8 @@
 package scraper
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/gocolly/colly"
-	"net/http"
 	"practice/pkg/utils"
 	"strconv"
 	"strings"
@@ -33,36 +30,28 @@ func SmallsLiveScraper(c *colly.Collector) {
 	c.Visit("https://www.smallslive.com/")
 
 	for i, performers := range allPerformers {
-		isEarlySet := isEarlySet(i)
-		venue := determineVenue(i)
-		performers["isEarlySet"] = strconv.FormatBool(isEarlySet)
+		appendIsEarlySet(i, &performers)
+		venue := appendVenue(i, &performers)
 		utils.AppendCurrentTime(&performers)
-		performers["venue"] = venue
-		payload, err := json.Marshal(performers)
-		if err != nil {
-			fmt.Println("error on that marshal mathers", err)
-		}
-		resp, err := http.Post(fmt.Sprintf("http://localhost:8080/api/v1/%s", venue), "application/json", bytes.NewBuffer(payload))
-
-		if err != nil {
-			fmt.Println("error on that http req", err)
-		}
-
-		fmt.Println("resp: ", resp)
+		utils.PostVenueData(fmt.Sprintf("http://localhost:8080/api/v1/%s", venue), &performers)
 	}
 
 }
 
-func isEarlySet(index int) bool {
+func appendIsEarlySet(index int, postable *map[string]string) {
 	if index > 1 {
-		return false
+		(*postable)["isEarlySet"] = strconv.FormatBool(false)
+	} else {
+		(*postable)["isEarlySet"] = strconv.FormatBool(true)
 	}
-	return true
 }
 
-func determineVenue(index int) string {
+func appendVenue(index int, postable *map[string]string) string {
 	if index%2 == 0 {
+		(*postable)["venue"] = "smalls"
 		return "smalls"
+	} else {
+		(*postable)["venue"] = "mezzrow"
+		return "mezzrow"
 	}
-	return "mezzrow"
 }
