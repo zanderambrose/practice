@@ -50,8 +50,8 @@ func appendVenue(index int, postable *map[string]string) string {
 	if index%2 == 0 {
 		(*postable)["venue"] = "smalls"
 		return "smalls"
-	} else {
-		(*postable)["venue"] = "mezzrow"
-		return "mezzrow"
 	}
+
+	(*postable)["venue"] = "mezzrow"
+	return "mezzrow"
 }
