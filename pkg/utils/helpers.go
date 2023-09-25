@@ -28,7 +28,7 @@ func PostVenueData(url string, postable *map[string]string) {
 	if err != nil {
 		fmt.Println("error on that marshal mathers", err)
 	}
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+	resp, err := http.Post(fmt.Sprintf("http://localhost:8080/api/v1/%s", url), "application/json", bytes.NewBuffer(payload))
 
 	if err != nil {
 		fmt.Println("error on that http req", err)

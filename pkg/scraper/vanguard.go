@@ -36,5 +36,5 @@ func Vanguard(c *colly.Collector) {
 	})
 
 	c.Visit("https://villagevanguard.com/")
-	utils.PostVenueData(fmt.Sprintf("http://localhost:8080/api/v1/%s", "vanguard"), &data)
+	utils.PostVenueData("vanguard", &data)
 }

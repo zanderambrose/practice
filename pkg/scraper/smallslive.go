@@ -33,7 +33,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 		appendIsEarlySet(i, &performers)
 		venue := appendVenue(i, &performers)
 		utils.AppendCurrentTime(&performers)
-		utils.PostVenueData(fmt.Sprintf("http://localhost:8080/api/v1/%s", venue), &performers)
+		utils.PostVenueData(venue, &performers)
 	}
 
 }
