@@ -2,24 +2,22 @@ package scraper
 
 import (
 	"fmt"
-	"github.com/gocolly/colly"
 	// "practice/pkg/utils"
-	"strings"
+	"net/http"
 )
 
-func Smoke(c *colly.Collector) {
+func Smoke() {
 	data := make(map[string]string, 0)
+	nodejsServerURL := "http://localhost:3000/scrape" // Adjust the URL
 
-	c.OnHTML("div", func(e *colly.HTMLElement) {
-		text := strings.TrimSpace(e.Text)
-		fmt.Println("on html: ", text)
-	})
-
-	err := c.Visit("https://tickets.smokejazz.com")
-
+	// Make an HTTP GET request to the server
+	resp, err := http.Get(nodejsServerURL)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println(err)
+		return
 	}
-	// utils.PostVenueData("vanguard", &data)
+	defer resp.Body.Close()
+	fmt.Println("response: ", resp)
+
 	fmt.Println("data: ", data)
 }
