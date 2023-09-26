@@ -13,8 +13,7 @@ func Vanguard(c *colly.Collector) {
 		if e.Index == 0 {
 
 			// Add band name
-			bandName := e.ChildText("h2")
-			data["bandName"] = bandName
+			AppendBandName(&data, e.ChildText("h2"))
 
 			// Add band members
 			e.ForEach("h4", func(_ int, bandMember *colly.HTMLElement) {

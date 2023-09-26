@@ -2,11 +2,8 @@ package scraper
 
 import (
 	"fmt"
-	"practice/pkg/utils"
-
 	"github.com/gocolly/colly"
-	// "strings"
-	// "unicode/utf8"
+	"practice/pkg/utils"
 )
 
 func Django(c *colly.Collector) {
@@ -16,7 +13,7 @@ func Django(c *colly.Collector) {
 	c.OnHTML("article", func(e *colly.HTMLElement) {
 		if e.Index == 1 {
 			// Add band name
-			appendBandName(&earlySet, e.ChildText("h3"))
+			AppendBandName(&earlySet, e.ChildText("h3"))
 
 			// Add details url
 			appendDetailsUrl(&earlySet, e.ChildAttr("a.details-container", "href"))
@@ -27,7 +24,7 @@ func Django(c *colly.Collector) {
 
 		if e.Index == 2 {
 			// Add band name
-			appendBandName(&lateSet, e.ChildText("h3"))
+			AppendBandName(&lateSet, e.ChildText("h3"))
 
 			// Add details url
 			appendDetailsUrl(&lateSet, e.ChildAttr("a.details-container", "href"))
@@ -44,7 +41,7 @@ func Django(c *colly.Collector) {
 	// utils.PostVenueData("django", &lateSet)
 }
 
-func appendBandName(setData *map[string]string, bandName string) {
+func AppendBandName(setData *map[string]string, bandName string) {
 	(*setData)["bandName"] = bandName
 }
 
