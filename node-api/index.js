@@ -5,20 +5,29 @@ const app = express();
 const port = 3000;
 
 app.get('/scrape', async (req, res) => {
-    console.log('route hit')
     const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
 
     await page.goto('https://tickets.smokejazz.com');
 
-    const detailsDiv = await page.waitForSelector('div > .details');
-    console.log("detailsDiv", detailsDiv)
+    const allEvents = await page.evaluate(() => {
+        const events = Array.from(document.querySelectorAll('div.performances'))
+        if (events.length) {
+            const data = events.map(event => ({
+                bandName: event.querySelector('h3').textContent,
+                dateOfPerformance: event.querySelector('h4').textContent,
+                bandInfo: event.querySelector('p').textContent
+            }))
 
-    const htmlContent = await page.content();
+            return data
+        }
+
+        return
+    })
 
     await browser.close();
 
-    res.json({ hello: htmlContent });
+    res.json(allEvents[0]);
 });
 
 app.listen(port, () => {
