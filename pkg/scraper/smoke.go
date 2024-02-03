@@ -8,22 +8,18 @@ import (
 	"net/http"
 )
 
-type ShowData struct {
+type Data struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Image       string `json:"image"`
 }
 
 type Performance struct {
-	Metadata ShowData `json:"metadata"`
-}
-
-type Results struct {
-	Performance []Performance `json:"show"`
+	Show Data `json:"show"`
 }
 
 type Response struct {
-	Results []Results `json:"results"`
+	Results []Performance `json:"results"`
 }
 
 func Smoke() {
@@ -47,9 +43,13 @@ func Smoke() {
 		return
 	}
 
-	for _, item := range results.Results {
-		fmt.Printf("Item: %s\n", item.Performance.Metadata.Name)
-		fmt.Printf("Item: %s\n", item.Performance.Metadata.Description)
-		fmt.Printf("Item: %s\n", item.Performance.Metadata.Image)
+	for idx, performance := range results.Results {
+		if idx > 0 {
+			break
+		}
+		fmt.Println("name: ", performance.Show.Name)
+		fmt.Println("description: ", performance.Show.Description)
+		fmt.Println("image: ", performance.Show.Image)
+
 	}
 }
