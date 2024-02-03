@@ -4,9 +4,6 @@ scraper:
 api:
 	go run github.com/cosmtrek/air
 
-node:
-	cd ./node-api && npm run dev
-
 db:
 	docker compose up -d db;
 
