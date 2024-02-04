@@ -17,6 +17,7 @@ type Performer struct {
 
 type SmallsLiveData struct {
 	EventTitle  string      `json:"eventTitle"`
+	EventImage  string      `json:"eventImage"`
 	EventTime   string      `json:"eventTime"`
 	EventDate   string      `json:"eventDate"`
 	CurrentTime string      `json:"currentTime"`
@@ -45,6 +46,10 @@ func (data *SmallsLiveData) AddBandMember(performer Performer) {
 	data.Band = append(data.Band, performer)
 }
 
+func (data *SmallsLiveData) AppendEventImage(imgSrc string) {
+	data.EventImage = "https:" + imgSrc
+}
+
 func (data *SmallsLiveData) AppendCurrentTime() {
 	loc, err := time.LoadLocation("America/New_York")
 	if err != nil {
@@ -61,6 +66,12 @@ func SmallsLiveScraper(c *colly.Collector) {
 
 		ariaLabel := e.ChildAttr("a", "aria-label")
 		eventDetails := strings.Split(ariaLabel, ", ")
+
+		// Get event img
+		e.ForEach("div.event-picture", func(_ int, elem *colly.HTMLElement) {
+			imgSrc := elem.ChildAttr("img", "src")
+			eventData.AppendEventImage(imgSrc)
+		})
 
 		// Get event title
 		eventTitle := e.ChildText("p.event-info-title")
