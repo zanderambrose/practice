@@ -7,6 +7,7 @@ import (
 	"practice/pkg/utils"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type Performer struct {
@@ -42,6 +43,16 @@ func (data *SmallsLiveData) AppendVenue(venue string) {
 
 func (data *SmallsLiveData) AddBandMember(performer Performer) {
 	data.Band = append(data.Band, performer)
+}
+
+func (data *SmallsLiveData) AppendCurrentTime() {
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Println("Error loading location:", err)
+		return
+	}
+	currentTime := time.Now().In(loc)
+	data.CurrentTime = currentTime.Format("2006-01-02 15:04:05")
 }
 
 func SmallsLiveScraper(c *colly.Collector) {
@@ -91,7 +102,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 			}
 		})
 
-		printStruct(eventData)
+		eventData.AppendCurrentTime()
 
 		// POST data to server
 		utils.PostVenueData(venue[1], eventData)

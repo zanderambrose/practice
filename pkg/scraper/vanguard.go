@@ -26,9 +26,6 @@ func Vanguard(c *colly.Collector) {
 					data[performer] = instrument
 				}
 			})
-
-			// Add current time
-			utils.AppendCurrentTime(&data)
 		}
 
 	})

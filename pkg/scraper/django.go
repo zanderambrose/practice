@@ -17,9 +17,6 @@ func Django(c *colly.Collector) {
 
 			// Add details url
 			appendDetailsUrl(&earlySet, e.ChildAttr("a.details-container", "href"))
-
-			// Add current time
-			utils.AppendCurrentTime(&earlySet)
 		}
 
 		if e.Index == 2 {
@@ -28,9 +25,6 @@ func Django(c *colly.Collector) {
 
 			// Add details url
 			appendDetailsUrl(&lateSet, e.ChildAttr("a.details-container", "href"))
-
-			// Add current time
-			utils.AppendCurrentTime(&lateSet)
 		}
 	})
 
