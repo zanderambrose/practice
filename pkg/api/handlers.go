@@ -37,7 +37,7 @@ func GetVenueLineup(c *fiber.Ctx) error {
 }
 
 func UpdateLineupV1(c *fiber.Ctx) error {
-	var payload map[string]string
+	var payload interface{}
 
 	if err := c.BodyParser(&payload); err != nil {
 		fmt.Println("error parsing: ", err)

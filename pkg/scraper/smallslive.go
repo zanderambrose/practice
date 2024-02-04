@@ -5,19 +5,55 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"practice/pkg/utils"
+	"reflect"
 	"strings"
 )
 
+type Performer struct {
+	Instrument string `json:"instrument"`
+	Name       string `json:"name"`
+}
+
+type SmallsLiveData struct {
+	EventTitle  string      `json:"eventTitle"`
+	EventTime   string      `json:"eventTime"`
+	EventDate   string      `json:"eventDate"`
+	CurrentTime string      `json:"currentTime"`
+	Venue       string      `json:"venue"`
+	Band        []Performer `json:"band"`
+}
+
+func (data *SmallsLiveData) AppendEventTitle(eventTitle string) {
+	data.EventTitle = eventTitle
+}
+
+func (data *SmallsLiveData) AppendEventTime(setTime string) {
+	data.EventTime = setTime
+}
+
+func (data *SmallsLiveData) AppendEventDate(eventDate string) {
+	data.EventDate = eventDate
+}
+
+func (data *SmallsLiveData) AppendVenue(venue string) {
+	venueName := strings.ToLower(venue)
+	data.Venue = venueName
+}
+
+func (data *SmallsLiveData) AddBandMember(performer Performer) {
+	data.Band = append(data.Band, performer)
+}
+
 func SmallsLiveScraper(c *colly.Collector) {
 	c.OnHTML("article.event-display-today-and-tomorrow", func(e *colly.HTMLElement) {
-		performers := make(map[string]string)
+		var eventData SmallsLiveData
 
 		ariaLabel := e.ChildAttr("a", "aria-label")
 		eventDetails := strings.Split(ariaLabel, ", ")
 
 		// Get event title
 		eventTitle := e.ChildText("p.event-info-title")
-		appendEventTitle(eventTitle, &performers)
+		eventData.AppendEventTitle(eventTitle)
 
 		// Get venue info
 		venueInfo, err := getEventDetails(eventDetails, -2)
@@ -25,7 +61,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 			fmt.Println("Error getting venue information")
 		}
 		venue := strings.Split(venueInfo, "Live at ")
-		appendVenue(venue[1], &performers)
+		eventData.AppendVenue(venue[1])
 
 		// Get set time info
 		setTimeInfo, err := getEventDetails(eventDetails, -1)
@@ -33,50 +69,35 @@ func SmallsLiveScraper(c *colly.Collector) {
 			fmt.Println("Error getting set time information")
 		}
 		eventTime := strings.Split(setTimeInfo, "sets start at ")
-		appendEventTime(eventTime[1], &performers)
+		eventData.AppendEventTime(eventTime[1])
 
 		// Get set date info
 		e.ForEach("div.sub-info__date-time", func(_ int, elem *colly.HTMLElement) {
 			info := elem.ChildText("div.title5:first-child")
-			appendEventDate(info, &performers)
+			eventData.AppendEventDate(info)
 		})
 
 		// Get performers info
 		e.ForEach("div.title5", func(_ int, elem *colly.HTMLElement) {
+			var performer Performer
 			text := elem.Text
 			parts := strings.Split(text, " / ")
 			if len(parts) == 2 {
-				performer := strings.TrimSpace(parts[0])
+				name := strings.TrimSpace(parts[0])
 				instrument := strings.TrimSpace(parts[1])
-				performers[performer] = instrument
+				performer.Name = name
+				performer.Instrument = instrument
+				eventData.AddBandMember(performer)
 			}
 		})
 
-		// Add current time stamp
-		utils.AppendCurrentTime(&performers)
+		printStruct(eventData)
 
 		// POST data to server
-		utils.PostVenueData(venue[1], &performers)
+		utils.PostVenueData(venue[1], eventData)
 	})
 
 	c.Visit("https://www.smallslive.com/")
-}
-
-func appendEventTitle(eventTitle string, postable *map[string]string) {
-	(*postable)["eventTitle"] = eventTitle
-}
-
-func appendEventTime(setTime string, postable *map[string]string) {
-	(*postable)["eventTime"] = setTime
-}
-
-func appendEventDate(eventDate string, postable *map[string]string) {
-	(*postable)["eventDate"] = eventDate
-}
-
-func appendVenue(venue string, postable *map[string]string) {
-	venueName := strings.ToLower(venue)
-	(*postable)["venue"] = venueName
 }
 
 func getEventDetails(details []string, target int) (string, error) {
@@ -89,4 +110,17 @@ func getEventDetails(details []string, target int) (string, error) {
 	}
 
 	return "", errors.New("Cannot get index")
+}
+
+func printStruct(s interface{}) {
+	v := reflect.ValueOf(s)
+	t := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldName := t.Field(i).Name
+		fieldValue := field.Interface()
+
+		fmt.Printf("%s: %v\n", fieldName, fieldValue)
+	}
 }

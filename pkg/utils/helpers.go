@@ -24,7 +24,7 @@ func AppendCurrentTime(postable *map[string]string) {
 	(*postable)["currentTime"] = currentTime.Format("2006-01-02 15:04:05")
 }
 
-func PostVenueData(url string, postable *map[string]string) {
+func PostVenueData(url string, postable interface{}) {
 	venue := strings.ToLower(url)
 	payload, err := json.Marshal(postable)
 	if err != nil {
