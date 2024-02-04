@@ -1,16 +1,16 @@
 package scraper
 
-// import "github.com/gocolly/colly"
+import "github.com/gocolly/colly"
 
 func Scraper() {
-	// smallsLive := colly.NewCollector()
-	// SmallsLiveScraper(smallsLive)
+	smallsLive := colly.NewCollector()
+	SmallsLiveScraper(smallsLive)
 
-	// vanguard := colly.NewCollector()
-	// Vanguard(vanguard)
+	vanguard := colly.NewCollector()
+	Vanguard(vanguard)
 
-	// django := colly.NewCollector()
-	// Django(django)
+	django := colly.NewCollector()
+	Django(django)
 
 	Smoke()
 }

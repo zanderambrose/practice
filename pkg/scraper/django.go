@@ -37,8 +37,8 @@ func Django(c *colly.Collector) {
 	c.Visit("https://www.thedjangonyc.com/events")
 	fmt.Println("earlySet: ", earlySet)
 	fmt.Println("lateSet: ", lateSet)
-	// utils.PostVenueData("django", &earlySet)
-	// utils.PostVenueData("django", &lateSet)
+	utils.PostVenueData("django", &earlySet)
+	utils.PostVenueData("django", &lateSet)
 }
 
 func AppendBandName(setData *map[string]string, bandName string) {

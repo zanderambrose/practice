@@ -57,11 +57,8 @@ func (client *MongoClient) UpdateLineupV1(c *fiber.Ctx) error {
 		})
 	}
 
-	// fmt.Println("payload: ", payload)
-	// fmt.Println("params: ", c.Params("venue"))
+	_, err := utils.GetCollection(client.MongoClient, c.Params("venue")).InsertOne(utils.CTX, payload)
 
-	id, err := utils.GetCollection(client.MongoClient, c.Params("venue")).InsertOne(utils.CTX, payload)
-	fmt.Println("id: ", *id)
 	if err != nil {
 		fmt.Println("INSERT ONE ERROR", err)
 	}

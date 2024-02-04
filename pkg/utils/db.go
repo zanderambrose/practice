@@ -6,7 +6,7 @@ import (
 )
 
 func InitDB() (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://root:examplepassword@localhost:27017")
+	clientOptions := options.Client().ApplyURI("mongodb://root:examplepassword@db:27017")
 	c, err := mongo.Connect(CTX, clientOptions)
 	if err != nil {
 		return nil, err
