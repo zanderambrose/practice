@@ -1,8 +1,5 @@
 scraper:
-	go run cmd/scraper/main.go;
-
-api:
-	go run github.com/cosmtrek/air
+	docker exec -it whoshittin-scraper-1 bash -c "go run cmd/scraper/main.go"
 
 up:
 	docker compose up -d --force-recreate -V;
