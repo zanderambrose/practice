@@ -1,9 +1,9 @@
 FROM golang:1.17
 
 WORKDIR /app
-COPY . .
+COPY . /app
 
-RUN go build -o main .
+RUN go build -o main /app/cmd/api/main.go
 
 EXPOSE 8080
 

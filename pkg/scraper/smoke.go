@@ -8,42 +8,48 @@ import (
 	"net/http"
 )
 
-type SmokeData struct {
-	BandName          string `json:"bandName"`
-	DateOfPerformance string `json:"dateOfPerformance"`
-	BandInfo          string `json:"bandInfo"`
+type Data struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
+}
+
+type Performance struct {
+	Show Data `json:"show"`
+}
+
+type Response struct {
+	Results []Performance `json:"results"`
 }
 
 func Smoke() {
-	var data SmokeData
-	nodejsServerURL := "http://localhost:3000/scrape"
-
-	// Make an HTTP GET request to the server
-	resp, err := http.Get(nodejsServerURL)
+	response, err := http.Get("https://tickets.smokejazz.com/api/performance/?booking=true")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error from GET request:", err)
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Error from RealAll:", err)
 		return
 	}
 
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
+	var results Response
+	err = json.Unmarshal(body, &results)
 	if err != nil {
-		fmt.Println("Error parsing response body: ", err)
+		fmt.Println("Error from unmarshal:", err)
 		return
 	}
 
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		fmt.Println("Error on unmarshal: ", err)
-		return
-	}
+	for idx, performance := range results.Results {
+		if idx > 0 {
+			break
+		}
+		fmt.Println("name: ", performance.Show.Name)
+		fmt.Println("description: ", performance.Show.Description)
+		fmt.Println("image: ", performance.Show.Image)
 
-	formattedJSON, err := json.MarshalIndent(data, "", "    ")
-	if err != nil {
-		fmt.Println("Error on marshal indent:", err)
-		return
 	}
-
-	fmt.Println(string(formattedJSON))
 }

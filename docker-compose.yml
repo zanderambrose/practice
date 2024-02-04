@@ -3,9 +3,19 @@ services:
   server:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev.api
     ports:
       - "8080:8080"
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev.scraper
+    volumes:
+      - ./:/app
     depends_on:
       - db
   db:
