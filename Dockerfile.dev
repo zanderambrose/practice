@@ -1,0 +1,11 @@
+FROM golang:1.19
+
+WORKDIR /app
+COPY . /app
+
+RUN go mod tidy 
+RUN go get github.com/cosmtrek/air
+ 
+EXPOSE 8080
+
+CMD go run github.com/cosmtrek/air
