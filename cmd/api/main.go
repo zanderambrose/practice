@@ -22,7 +22,7 @@ func main() {
 		}
 	}()
 
-	api.ApplyRoutes(app, client)
+	api.ApplyRoutes(app)
 
 	app.Listen(":8080")
 }

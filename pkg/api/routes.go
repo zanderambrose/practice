@@ -2,12 +2,10 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func ApplyRoutes(app *fiber.App, client *mongo.Client) {
-	withClient := InitClient(client)
+func ApplyRoutes(app *fiber.App) {
 	app.Get("/api/v1/", HelloWorld)
-	app.Get("/api/v1/:venue", withClient.GetVenueLineup)
-	app.Post("/api/v1/:venue", withClient.UpdateLineupV1)
+	app.Get("/api/v1/:venue", GetVenueLineup)
+	app.Post("/api/v1/:venue", UpdateLineupV1)
 }
