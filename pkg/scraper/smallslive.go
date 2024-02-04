@@ -13,7 +13,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 	c.OnHTML("div.artists", func(e *colly.HTMLElement) {
 		performers := make(map[string]string)
 
-		e.ForEach("a.title5", func(_ int, elem *colly.HTMLElement) {
+		e.ForEach("div.title5", func(_ int, elem *colly.HTMLElement) {
 			text := elem.Text
 			parts := strings.Split(text, " / ")
 			if len(parts) == 2 {
