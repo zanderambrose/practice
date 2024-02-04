@@ -15,6 +15,10 @@ func SmallsLiveScraper(c *colly.Collector) {
 		ariaLabel := e.ChildAttr("a", "aria-label")
 		eventDetails := strings.Split(ariaLabel, ", ")
 
+		// Get event title
+		eventTitle := e.ChildText("p.event-info-title")
+		appendEventTitle(eventTitle, &performers)
+
 		// Get venue info
 		venueInfo, err := getEventDetails(eventDetails, -2)
 		if err != nil {
@@ -31,7 +35,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 		eventTime := strings.Split(setTimeInfo, "sets start at ")
 		appendEventTime(eventTime[1], &performers)
 
-		// Get set data info
+		// Get set date info
 		e.ForEach("div.sub-info__date-time", func(_ int, elem *colly.HTMLElement) {
 			info := elem.ChildText("div.title5:first-child")
 			appendEventDate(info, &performers)
@@ -56,6 +60,10 @@ func SmallsLiveScraper(c *colly.Collector) {
 	})
 
 	c.Visit("https://www.smallslive.com/")
+}
+
+func appendEventTitle(eventTitle string, postable *map[string]string) {
+	(*postable)["eventTitle"] = eventTitle
 }
 
 func appendEventTime(setTime string, postable *map[string]string) {
