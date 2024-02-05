@@ -3,16 +3,17 @@ package scraper
 import (
 	"github.com/gocolly/colly"
 	"practice/pkg/utils"
+	"strings"
 )
 
 type SmokeData struct {
-	EventTitle      string   `json:"eventTitle"`
-	EventImage      string   `json:"eventImage"`
-	EventTime       []string `json:"eventTime"`
-	EventDate       string   `json:"eventDate"`
-	CurrentTime     string   `json:"currentTime"`
-	Venue           string   `json:"venue"`
-	BandDescription string   `json:"bandDescription"`
+	EventTitle      string   `json:"eventTitle" bson:"eventTitle"`
+	EventImage      string   `json:"eventImage" bson:"eventImage"`
+	EventTime       []string `json:"eventTime" bson:"eventTime"`
+	EventDate       string   `json:"eventDate" bson:"eventDate"`
+	CurrentTime     string   `json:"currentTime" bson:"currentTime"`
+	Venue           string   `json:"venue" bson:"venue"`
+	BandDescription string   `json:"bandDescription" bson:"bandDescription"`
 }
 
 func Smoke(c *colly.Collector) {
@@ -27,7 +28,7 @@ func Smoke(c *colly.Collector) {
 		}
 
 		e.ForEach("button", func(_ int, elem *colly.HTMLElement) {
-			eventData.EventTime = append(eventData.EventTime, elem.Text)
+			eventData.EventTime = append(eventData.EventTime, strings.TrimSpace(elem.Text))
 		})
 
 		// POST data to server

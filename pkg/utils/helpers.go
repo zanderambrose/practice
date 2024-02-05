@@ -12,13 +12,6 @@ import (
 
 var CTX = context.Background()
 
-func IsAdult(age int) bool {
-	if age < 18 {
-		return false
-	}
-	return true
-}
-
 func PostVenueData(url string, postable interface{}) {
 	venue := strings.ToLower(url)
 	payload, err := json.Marshal(postable)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"practice/pkg/models"
 	"practice/pkg/utils"
 )
 
@@ -14,25 +13,15 @@ func HelloWorld(c *fiber.Ctx) error {
 }
 
 func GetVenueLineup(c *fiber.Ctx) error {
-	cursor, err := utils.GetCollection(c.Params("venue")).Find(utils.CTX, bson.D{})
+	cursor, err := utils.GetCollection(c.Params("venue")).Find(utils.CTX, bson.M{})
 	if err != nil {
 		fmt.Println("Error finding documents")
 	}
 
 	defer cursor.Close(utils.CTX)
 
-	var results []models.Person
-	if err := cursor.All(utils.CTX, &results); err != nil {
-		fmt.Println("Error ", err)
-	}
-
-	if err := cursor.Err(); err != nil {
-		fmt.Println("Error ", err)
-	}
-
-	response := map[string]interface{}{
-		"people": results,
-	}
+	var response []map[string]interface{}
+	cursor.All(utils.CTX, &response)
 	return c.JSON(response)
 }
 
