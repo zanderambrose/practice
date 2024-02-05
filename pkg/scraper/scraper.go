@@ -12,5 +12,6 @@ func Scraper() {
 	django := colly.NewCollector()
 	Django(django)
 
-	Smoke()
+	smoke := colly.NewCollector()
+	Smoke(smoke)
 }

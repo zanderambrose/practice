@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 var CTX = context.Background()
@@ -31,4 +32,13 @@ func PostVenueData(url string, postable interface{}) {
 	}
 
 	fmt.Println("resp: ", resp)
+}
+
+func GetCurrentTime() string {
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Println("Error loading location:", err)
+	}
+	currentTime := time.Now().In(loc)
+	return currentTime.Format("2006-01-02 15:04:05")
 }

@@ -7,7 +7,6 @@ import (
 	"practice/pkg/utils"
 	"reflect"
 	"strings"
-	"time"
 )
 
 type Performer struct {
@@ -51,13 +50,8 @@ func (data *SmallsLiveData) AppendEventImage(imgSrc string) {
 }
 
 func (data *SmallsLiveData) AppendCurrentTime() {
-	loc, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		fmt.Println("Error loading location:", err)
-		return
-	}
-	currentTime := time.Now().In(loc)
-	data.CurrentTime = currentTime.Format("2006-01-02 15:04:05")
+	time := utils.GetCurrentTime()
+	data.CurrentTime = time
 }
 
 func SmallsLiveScraper(c *colly.Collector) {

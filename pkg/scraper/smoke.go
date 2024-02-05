@@ -1,55 +1,38 @@
 package scraper
 
 import (
-	"fmt"
-	// "practice/pkg/utils"
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"github.com/gocolly/colly"
+	"practice/pkg/utils"
 )
 
-type Data struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
+type SmokeData struct {
+	EventTitle      string   `json:"eventTitle"`
+	EventImage      string   `json:"eventImage"`
+	EventTime       []string `json:"eventTime"`
+	EventDate       string   `json:"eventDate"`
+	CurrentTime     string   `json:"currentTime"`
+	Venue           string   `json:"venue"`
+	BandDescription string   `json:"bandDescription"`
 }
 
-type Performance struct {
-	Show Data `json:"show"`
-}
-
-type Response struct {
-	Results []Performance `json:"results"`
-}
-
-func Smoke() {
-	response, err := http.Get("https://tickets.smokejazz.com/api/performance/?booking=true")
-	if err != nil {
-		fmt.Println("Error from GET request:", err)
-		return
-	}
-	defer response.Body.Close()
-
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error from RealAll:", err)
-		return
-	}
-
-	var results Response
-	err = json.Unmarshal(body, &results)
-	if err != nil {
-		fmt.Println("Error from unmarshal:", err)
-		return
-	}
-
-	for idx, performance := range results.Results {
-		if idx > 0 {
-			break
+func Smoke(c *colly.Collector) {
+	c.OnHTML("div.show.border-b", func(e *colly.HTMLElement) {
+		eventData := SmokeData{
+			EventTitle:      e.ChildText("h3.text-3xl"),
+			EventImage:      e.ChildAttr("img", "src"),
+			EventDate:       e.ChildText("h4.day-of-week"),
+			CurrentTime:     utils.GetCurrentTime(),
+			Venue:           "smoke",
+			BandDescription: e.ChildText("p.inline"),
 		}
-		fmt.Println("name: ", performance.Show.Name)
-		fmt.Println("description: ", performance.Show.Description)
-		fmt.Println("image: ", performance.Show.Image)
 
-	}
+		e.ForEach("button", func(_ int, elem *colly.HTMLElement) {
+			eventData.EventTime = append(eventData.EventTime, elem.Text)
+		})
+
+		// POST data to server
+		utils.PostVenueData("smoke", eventData)
+	})
+	c.Visit("https://tickets.smokejazz.com/")
+
 }
