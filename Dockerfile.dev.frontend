@@ -1,0 +1,12 @@
+FROM node:18.17.0-alpine
+
+WORKDIR /app
+
+COPY ./whoshittin/package.json /app
+COPY ./whoshittin/package-lock.json /app
+
+RUN npm install
+
+COPY ./whoshittin /app
+
+CMD ["npm", "run", "dev"]

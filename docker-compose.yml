@@ -25,3 +25,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: examplepassword
+  frontend:
+      build:
+        context: .
+        dockerfile: Dockerfile.dev.frontend
+      volumes:
+        - ./whoshittin/:/app
+      ports:
+        - 3000:3000
