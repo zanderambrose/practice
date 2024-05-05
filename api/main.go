@@ -3,21 +3,21 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"practice/pkg/api"
-	"practice/pkg/utils"
+	"whoshittin/api/routes"
+	"whoshittin/api/utils"
 )
 
 func main() {
 	app := fiber.New()
 
-	client, err := utils.InitDB()
+	client, err := db.InitDB()
 
 	if err != nil {
 		fmt.Println("Failed to connect to MongoDB :", err)
 	}
 
 	defer func() {
-		if err := client.Disconnect(utils.CTX); err != nil {
+		if err := client.Disconnect(db.CTX); err != nil {
 			panic(err)
 		}
 	}()

@@ -1,12 +1,15 @@
-package utils
+package db
 
 import (
+	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var mongoClient *mongo.Client
+
+var CTX = context.Background()
 
 func InitDB() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI("mongodb://root:examplepassword@db:27017")

@@ -3,7 +3,7 @@ package scraper
 import (
 	"fmt"
 	"github.com/gocolly/colly"
-	"practice/pkg/utils"
+	"whoshittin/scraper/utils"
 )
 
 func Django(c *colly.Collector) {

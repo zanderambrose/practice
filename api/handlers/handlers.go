@@ -1,10 +1,10 @@
-package api
+package handlers
 
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"practice/pkg/utils"
+	"whoshittin/api/utils"
 )
 
 func HelloWorld(c *fiber.Ctx) error {
@@ -13,15 +13,15 @@ func HelloWorld(c *fiber.Ctx) error {
 }
 
 func GetVenueLineup(c *fiber.Ctx) error {
-	cursor, err := utils.GetCollection(c.Params("venue")).Find(utils.CTX, bson.M{})
+	cursor, err := db.GetCollection(c.Params("venue")).Find(db.CTX, bson.M{})
 	if err != nil {
 		fmt.Println("Error finding documents")
 	}
 
-	defer cursor.Close(utils.CTX)
+	defer cursor.Close(db.CTX)
 
 	var response []map[string]interface{}
-	cursor.All(utils.CTX, &response)
+	cursor.All(db.CTX, &response)
 	return c.JSON(response)
 }
 
@@ -35,7 +35,7 @@ func UpdateLineupV1(c *fiber.Ctx) error {
 		})
 	}
 
-	_, err := utils.GetCollection(c.Params("venue")).InsertOne(utils.CTX, payload)
+	_, err := db.GetCollection(c.Params("venue")).InsertOne(db.CTX, payload)
 
 	if err != nil {
 		fmt.Println("INSERT ONE ERROR", err)

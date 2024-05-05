@@ -1,4 +1,4 @@
-module practice
+module whoshittin
 
 go 1.19
 

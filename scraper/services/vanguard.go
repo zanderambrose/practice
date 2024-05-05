@@ -2,9 +2,9 @@ package scraper
 
 import (
 	"github.com/gocolly/colly"
-	"practice/pkg/utils"
 	"strings"
 	"unicode/utf8"
+	"whoshittin/scraper/utils"
 )
 
 func Vanguard(c *colly.Collector) {
