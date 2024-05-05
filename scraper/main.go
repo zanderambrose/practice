@@ -1,7 +1,7 @@
 package main
 
 import (
-	"practice/pkg/scraper"
+	"whoshittin/scraper/services"
 )
 
 func main() {

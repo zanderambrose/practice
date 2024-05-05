@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gocolly/colly"
-	"practice/pkg/utils"
 	"reflect"
 	"strings"
+	"whoshittin/scraper/utils"
 )
 
 type Performer struct {

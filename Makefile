@@ -1,5 +1,5 @@
-scraper:
-	docker exec -it whoshittin-scraper-1 bash -c "go run cmd/scraper/main.go"
+scrape:
+	docker exec -it whoshittin-scraper-1 bash -c "go run ./scraper/main.go"
 
 up:
 	docker compose up -d --force-recreate -V;

@@ -2,8 +2,8 @@ package scraper
 
 import (
 	"github.com/gocolly/colly"
-	"practice/pkg/utils"
 	"strings"
+	"whoshittin/scraper/utils"
 )
 
 type SmokeData struct {
