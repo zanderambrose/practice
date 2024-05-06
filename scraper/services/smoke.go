@@ -1,35 +1,37 @@
 package scraper
 
 import (
+	"fmt"
 	"github.com/gocolly/colly"
-	"strings"
+	"regexp"
 	"whoshittin/scraper/utils"
 )
 
 type SmokeData struct {
-	EventTitle      string   `json:"eventTitle" bson:"eventTitle"`
-	EventImage      string   `json:"eventImage" bson:"eventImage"`
-	EventTime       []string `json:"eventTime" bson:"eventTime"`
-	EventDate       string   `json:"eventDate" bson:"eventDate"`
-	CurrentTime     string   `json:"currentTime" bson:"currentTime"`
-	Venue           string   `json:"venue" bson:"venue"`
-	BandDescription string   `json:"bandDescription" bson:"bandDescription"`
+	EventInfo
 }
 
 func Smoke(c *colly.Collector) {
-	c.OnHTML("div.show.border-b", func(e *colly.HTMLElement) {
-		eventData := SmokeData{
-			EventTitle:      e.ChildText("h3.text-3xl"),
-			EventImage:      e.ChildAttr("img", "src"),
-			EventDate:       e.ChildText("h4.day-of-week"),
-			CurrentTime:     utils.GetCurrentTime(),
-			Venue:           "smoke",
-			BandDescription: e.ChildText("p.inline"),
-		}
+	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
+		fmt.Println("Hello world from smoke")
+		var eventData SmokeData
+		eventData.AppendEventTime(utils.GetCurrentTime())
+		eventData.AppendEventTitle(e.ChildText("h3.text-3xl"))
+		eventData.AppendEventDate(e.ChildText("h4.day-of-week"))
+		eventData.AppendEventImage(e.ChildAttr("img", "src"))
+		eventData.AppendVenue("smoke")
 
-		e.ForEach("button", func(_ int, elem *colly.HTMLElement) {
-			eventData.EventTime = append(eventData.EventTime, strings.TrimSpace(elem.Text))
-		})
+		text := e.ChildText("span")
+		re := regexp.MustCompile(`([^\s–]+ [^\s–]+) – ([^\n]+)`)
+		matches := re.FindAllStringSubmatch(text, -1)
+		for _, match := range matches {
+			var performer Performer
+			name := match[1]
+			instrument := match[2]
+			performer.Name = name
+			performer.Instrument = instrument
+			eventData.AddBandMember(performer)
+		}
 
 		// POST data to server
 		utils.PostVenueData("smoke", eventData)

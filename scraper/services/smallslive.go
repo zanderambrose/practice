@@ -9,49 +9,8 @@ import (
 	"whoshittin/scraper/utils"
 )
 
-type Performer struct {
-	Instrument string `json:"instrument"`
-	Name       string `json:"name"`
-}
-
 type SmallsLiveData struct {
-	EventTitle  string      `json:"eventTitle"`
-	EventImage  string      `json:"eventImage"`
-	EventTime   string      `json:"eventTime"`
-	EventDate   string      `json:"eventDate"`
-	CurrentTime string      `json:"currentTime"`
-	Venue       string      `json:"venue"`
-	Band        []Performer `json:"band"`
-}
-
-func (data *SmallsLiveData) AppendEventTitle(eventTitle string) {
-	data.EventTitle = eventTitle
-}
-
-func (data *SmallsLiveData) AppendEventTime(setTime string) {
-	data.EventTime = setTime
-}
-
-func (data *SmallsLiveData) AppendEventDate(eventDate string) {
-	data.EventDate = eventDate
-}
-
-func (data *SmallsLiveData) AppendVenue(venue string) {
-	venueName := strings.ToLower(venue)
-	data.Venue = venueName
-}
-
-func (data *SmallsLiveData) AddBandMember(performer Performer) {
-	data.Band = append(data.Band, performer)
-}
-
-func (data *SmallsLiveData) AppendEventImage(imgSrc string) {
-	data.EventImage = "https:" + imgSrc
-}
-
-func (data *SmallsLiveData) AppendCurrentTime() {
-	time := utils.GetCurrentTime()
-	data.CurrentTime = time
+	EventInfo
 }
 
 func SmallsLiveScraper(c *colly.Collector) {
