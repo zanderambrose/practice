@@ -12,6 +12,7 @@ var mongoClient *mongo.Client
 var CTX = context.Background()
 
 func InitDB() (*mongo.Client, error) {
+	// TODO - This needs env variable
 	clientOptions := options.Client().ApplyURI("mongodb://root:examplepassword@db:27017")
 	client, err := mongo.Connect(CTX, clientOptions)
 	if err != nil {
@@ -38,11 +39,18 @@ func GetMongoClient() (*mongo.Client, error) {
 	return mongoClient, nil
 }
 
-func GetCollection(name string) *mongo.Collection {
+func GetDatabase() *mongo.Database {
 	client, err := GetMongoClient()
+	// ERROR HANDLE
 	if err != nil {
 		fmt.Println("Error getting mongo client in get collection")
 	}
-	coll := client.Database("whoshittin").Collection(name)
-	return coll
+
+	// TODO - This needs env variable
+	return client.Database("whoshittin")
+}
+
+func GetCollection(name string) *mongo.Collection {
+	db := GetDatabase()
+	return db.Collection(name)
 }

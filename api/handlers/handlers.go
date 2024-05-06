@@ -2,15 +2,12 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/gocolly/colly"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"whoshittin/api/utils"
+	"whoshittin/scraper/services"
 )
-
-func HelloWorld(c *fiber.Ctx) error {
-	var response = map[string]string{"hello": "world"}
-	return c.JSON(response)
-}
 
 func GetVenueLineup(c *fiber.Ctx) error {
 	cursor, err := db.GetCollection(c.Params("venue")).Find(db.CTX, bson.M{})
@@ -42,4 +39,44 @@ func UpdateLineupV1(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(payload)
+}
+
+func DeleteCollection(c *fiber.Ctx) error {
+	venue := c.Params("venue")
+	err := db.GetCollection(venue).Drop(db.CTX)
+
+	if err != nil {
+		fmt.Println("DELETE COLLECTION ERROR", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func ListCollections(c *fiber.Ctx) error {
+	database := db.GetDatabase()
+
+	collections, err := database.ListCollectionNames(db.CTX, bson.D{{}})
+	if err != nil {
+		fmt.Println("ERROR GETTING ALL COLLECTIONS:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"collections": collections,
+	})
+}
+
+func ScrapeVenue(c *fiber.Ctx) error {
+	venue := c.Params("venue")
+	scraperFunc := scraper.ScraperMap[venue]
+
+	collector := colly.NewCollector()
+	scraperFunc(collector)
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

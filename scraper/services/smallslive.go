@@ -111,6 +111,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 
 		// POST data to server
 		utils.PostVenueData(venue[1], eventData)
+
 	})
 
 	c.Visit("https://www.smallslive.com/")

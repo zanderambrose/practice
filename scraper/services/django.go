@@ -13,7 +13,7 @@ func Django(c *colly.Collector) {
 	c.OnHTML("article", func(e *colly.HTMLElement) {
 		if e.Index == 1 {
 			// Add band name
-			AppendBandName(&earlySet, e.ChildText("h3"))
+			AppendEventTitle(&earlySet, e.ChildText("h3"))
 
 			// Add details url
 			appendDetailsUrl(&earlySet, e.ChildAttr("a.details-container", "href"))
@@ -21,7 +21,7 @@ func Django(c *colly.Collector) {
 
 		if e.Index == 2 {
 			// Add band name
-			AppendBandName(&lateSet, e.ChildText("h3"))
+			AppendEventTitle(&lateSet, e.ChildText("h3"))
 
 			// Add details url
 			appendDetailsUrl(&lateSet, e.ChildAttr("a.details-container", "href"))
@@ -35,8 +35,8 @@ func Django(c *colly.Collector) {
 	utils.PostVenueData("django", &lateSet)
 }
 
-func AppendBandName(setData *map[string]string, bandName string) {
-	(*setData)["bandName"] = bandName
+func AppendEventTitle(setData *map[string]string, bandName string) {
+	(*setData)["eventTitle"] = bandName
 }
 
 func appendDetailsUrl(setData *map[string]string, url string) {
