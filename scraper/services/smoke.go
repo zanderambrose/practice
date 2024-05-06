@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"fmt"
 	"github.com/gocolly/colly"
 	"regexp"
 	"whoshittin/scraper/utils"
@@ -13,7 +12,6 @@ type SmokeData struct {
 
 func Smoke(c *colly.Collector) {
 	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
-		fmt.Println("Hello world from smoke")
 		var eventData SmokeData
 		eventData.AppendEventTime(utils.GetCurrentTime())
 		eventData.AppendEventTitle(e.ChildText("h3.text-3xl"))
