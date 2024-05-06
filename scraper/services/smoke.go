@@ -3,6 +3,7 @@ package scraper
 import (
 	"github.com/gocolly/colly"
 	"regexp"
+	"strings"
 	"whoshittin/scraper/utils"
 )
 
@@ -13,15 +14,15 @@ type SmokeData struct {
 func Smoke(c *colly.Collector) {
 	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
 		var eventData SmokeData
-		eventData.AppendEventTime(utils.GetCurrentTime())
+		eventData.AppendCurrentTime()
 		eventData.AppendEventTitle(e.ChildText("h3.text-3xl"))
 		eventData.AppendEventDate(e.ChildText("h4.day-of-week"))
 		eventData.AppendEventImage(e.ChildAttr("img", "src"))
 		eventData.AppendVenue("smoke")
 
-		text := e.ChildText("span")
+		descriptionText := e.ChildText("span")
 		re := regexp.MustCompile(`([^\s–]+ [^\s–]+) – ([^\n]+)`)
-		matches := re.FindAllStringSubmatch(text, -1)
+		matches := re.FindAllStringSubmatch(descriptionText, -1)
 		for _, match := range matches {
 			var performer Performer
 			name := match[1]
@@ -30,6 +31,20 @@ func Smoke(c *colly.Collector) {
 			performer.Instrument = instrument
 			eventData.AddBandMember(performer)
 		}
+
+		var allShowTimes string
+		e.ForEach("button", func(_ int, time *colly.HTMLElement) {
+			eventTime := time.Text
+			showIndex := strings.Index(eventTime, " SHOW")
+
+			showTime := eventTime[:showIndex]
+
+			if len(allShowTimes) != 0 {
+				allShowTimes += " & "
+			}
+			allShowTimes += showTime
+		})
+		eventData.AppendEventTime(allShowTimes)
 
 		// POST data to server
 		utils.PostVenueData("smoke", eventData)

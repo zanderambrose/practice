@@ -45,7 +45,11 @@ func (data *EventInfo) AddBandMember(performer Performer) {
 }
 
 func (data *EventInfo) AppendEventImage(imgSrc string) {
-	data.EventImage = "https:" + imgSrc
+	if strings.Contains(imgSrc, "https") {
+		data.EventImage = imgSrc
+	} else {
+		data.EventImage = "https:" + imgSrc
+	}
 }
 
 func (data *EventInfo) AppendCurrentTime() {
