@@ -34,8 +34,6 @@ func GetMongoClient() (*mongo.Client, error) {
 		fmt.Println("HAVING TO INIT DB")
 		return InitDB()
 	}
-
-	fmt.Println("RETURNING SINGLE MONGO CLIENT")
 	return mongoClient, nil
 }
 

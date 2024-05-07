@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"github.com/gocolly/colly"
+	"regexp"
 	"strings"
 	"whoshittin/scraper/utils"
 )
@@ -22,7 +23,8 @@ func Vanguard(c *colly.Collector) {
 			eventData.AppendCurrentTime()
 			eventData.AppendEventTitle(eventTitle)
 			eventData.AppendEventTime(performanceTime)
-			eventData.AppendEventDate(e.ChildText("div.event-details > h3"))
+			trimmedEventText := strings.TrimSpace(replaceWhitespace(e.ChildText("div.event-details > h3")))
+			eventData.AppendEventDate(trimmedEventText)
 			eventData.AppendEventImage(e.ChildAttr("img", "src"))
 			eventData.AppendVenue(vanguardVenueName)
 
@@ -39,7 +41,7 @@ func Vanguard(c *colly.Collector) {
 						eventData.AddBandMember(performer)
 					}
 				} else {
-
+					// TODO - Handle Vanguard jazz orchestra band member formatting
 				}
 			})
 			utils.PostVenueData(vanguardVenueName, eventData)
@@ -47,4 +49,10 @@ func Vanguard(c *colly.Collector) {
 	})
 
 	c.Visit("https://villagevanguard.com/")
+}
+
+func replaceWhitespace(input string) string {
+	// replace whitespace characters with a single space
+	re := regexp.MustCompile(`\s+`)
+	return re.ReplaceAllString(input, " ")
 }
