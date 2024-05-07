@@ -13,11 +13,13 @@ func main() {
 	client, err := db.InitDB()
 
 	if err != nil {
+		// TODO - Log handling
 		fmt.Println("Failed to connect to MongoDB :", err)
 	}
 
 	defer func() {
 		if err := client.Disconnect(db.CTX); err != nil {
+			// TODO - Log handling
 			panic(err)
 		}
 	}()

@@ -16,6 +16,7 @@ func InitDB() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI("mongodb://root:examplepassword@db:27017")
 	client, err := mongo.Connect(CTX, clientOptions)
 	if err != nil {
+		// TODO - Log handling
 		return nil, err
 	}
 
@@ -23,6 +24,7 @@ func InitDB() (*mongo.Client, error) {
 
 	err = mongoClient.Ping(CTX, nil)
 	if err != nil {
+		// TODO - Log handling
 		return nil, err
 	}
 
@@ -31,7 +33,6 @@ func InitDB() (*mongo.Client, error) {
 
 func GetMongoClient() (*mongo.Client, error) {
 	if mongoClient == nil {
-		fmt.Println("HAVING TO INIT DB")
 		return InitDB()
 	}
 	return mongoClient, nil

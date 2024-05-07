@@ -14,6 +14,7 @@ type EventInfo struct {
 	CurrentTime string      `json:"currentTime" bson:"currentTime"`
 	EventTitle  string      `json:"eventTitle" bson:"eventTitle"`
 	EventImage  string      `json:"eventImage" bson:"eventImage"`
+	EventLink   string      `json:"eventLink" bson:"eventLink"`
 }
 
 type Performer struct {
@@ -25,6 +26,10 @@ func (data *EventInfo) AppendEventTitle(eventTitle string) {
 	data.EventTitle = eventTitle
 }
 
+func (data *EventInfo) AppendEventLink(eventLink string) {
+	data.EventLink = eventLink
+}
+
 func (data *EventInfo) AppendEventTime(setTime string) {
 	data.EventTime = setTime
 }
@@ -34,8 +39,7 @@ func (data *EventInfo) AppendEventDate(eventDate string) {
 }
 
 func (data *EventInfo) AppendVenue(venue string) {
-	venueName := strings.ToLower(venue)
-	data.Venue = venueName
+	data.Venue = strings.ToLower(venue)
 }
 
 func (data *EventInfo) AddBandMember(performer Performer) {

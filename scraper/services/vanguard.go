@@ -28,6 +28,7 @@ func Vanguard(c *colly.Collector) {
 			eventData.AppendEventImage(e.ChildAttr("img", "src"))
 			eventData.AppendVenue(vanguardVenueName)
 
+			// TODO - HANDLE DIFFERENT BANDS FOR DIFFERENT DATES IN H4 LOOPS
 			e.ForEach("h4", func(_ int, bandMember *colly.HTMLElement) {
 				var performer Performer
 				if eventTitle != vanguardJazzOrchestra {
