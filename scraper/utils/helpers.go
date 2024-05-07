@@ -12,24 +12,28 @@ import (
 
 var CTX = context.Background()
 
-func PostVenueData(url string, postable interface{}) {
+func PostVenueData(url string, postable interface{}) *http.Response {
 	venue := strings.ToLower(url)
 	payload, err := json.Marshal(postable)
 	if err != nil {
+		// TODO - Log handling
 		fmt.Println("error on that marshal mathers", err)
 	}
+	// TODO - This needs env variable
 	resp, err := http.Post(fmt.Sprintf("http://server:8080/api/v1/%s", venue), "application/json", bytes.NewBuffer(payload))
 
 	if err != nil {
+		// TODO - Log handling
 		fmt.Println("error on that http req", err)
 	}
 
-	fmt.Println("resp: ", resp)
+	return resp
 }
 
 func GetCurrentTime() string {
 	loc, err := time.LoadLocation("America/New_York")
 	if err != nil {
+		// TODO - Log handling
 		fmt.Println("Error loading location:", err)
 	}
 	currentTime := time.Now().In(loc)

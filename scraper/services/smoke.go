@@ -11,6 +11,8 @@ type SmokeData struct {
 	EventInfo
 }
 
+const smokeVenueName = "smoke"
+
 func Smoke(c *colly.Collector) {
 	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
 		var eventData SmokeData
@@ -18,7 +20,7 @@ func Smoke(c *colly.Collector) {
 		eventData.AppendEventTitle(e.ChildText("h3.text-3xl"))
 		eventData.AppendEventDate(e.ChildText("h4.day-of-week"))
 		eventData.AppendEventImage(e.ChildAttr("img", "src"))
-		eventData.AppendVenue("smoke")
+		eventData.AppendVenue(smokeVenueName)
 
 		descriptionText := e.ChildText("span")
 		re := regexp.MustCompile(`([^\s–]+ [^\s–]+) – ([^\n]+)`)
@@ -45,9 +47,7 @@ func Smoke(c *colly.Collector) {
 			allShowTimes += showTime
 		})
 		eventData.AppendEventTime(allShowTimes)
-
-		// POST data to server
-		utils.PostVenueData("smoke", eventData)
+		utils.PostVenueData(smokeVenueName, eventData)
 	})
 	c.Visit("https://tickets.smokejazz.com/")
 
