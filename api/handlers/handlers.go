@@ -80,3 +80,8 @@ func ScrapeVenue(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+func ScrapeVenues(c *fiber.Ctx) error {
+	scraper.Scraper()
+	return c.SendStatus(fiber.StatusNoContent)
+}
