@@ -34,11 +34,12 @@ func Ornithology(c *colly.Collector) {
 		modifiedURL := strings.Replace(linkUrl, "/events-2", "", 1)
 		finalURL := modifiedURL + extractedHref
 		eventData.AppendEventLink(finalURL)
-
 		eventData.AppendCurrentTime()
 		eventData.AppendVenue(ornithologyVenueName)
-		eventData.AppendEventTitle(e.ChildText("h1 > a"))
-		eventData.AppendEventImage(e.ChildAttr("img", "src"))
+		eventTitle := e.ChildText("h1 > a")
+		eventData.AppendEventTitle(eventTitle)
+		appendEventTime(eventTitle, &eventData)
+		eventData.AppendEventImage("https://images.squarespace-cdn.com/content/v1/611849a90dfaab4317cd4c6b/86dce9c5-3273-49cb-a46d-8709b98bac56/68571516_padded_logo.png?format=1500w")
 
 		var isElementFound bool = false
 		e.ForEach("time.event-date", func(_ int, child *colly.HTMLElement) {
@@ -65,4 +66,12 @@ func Ornithology(c *colly.Collector) {
 		utils.PostVenueData(ornithologyVenueName, eventData)
 	})
 	c.Visit(visitUrl)
+}
+
+func appendEventTime(title string, eventData *OrnithologyData) {
+	if title == "Jazz Dialogue Open Jam" {
+		eventData.AppendEventTime("9:00PM - 12:00AM")
+	} else {
+		eventData.AppendEventTime("6:30PM - 8:30PM")
+	}
 }
