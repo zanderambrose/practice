@@ -33,8 +33,6 @@ func Django(c *colly.Collector) {
 		lateEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
 		lateEventData.AppendEventImage(e.ChildAttr("img", "src"))
 		utils.PostVenueData(djangoVenueName, lateEventData)
-
 	})
-
 	c.Visit("https://www.thedjangonyc.com/events")
 }
