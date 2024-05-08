@@ -1,44 +1,40 @@
 package scraper
 
 import (
-	"fmt"
 	"github.com/gocolly/colly"
+	"strings"
 	"whoshittin/scraper/utils"
 )
 
+type DjangoData struct {
+	EventInfo
+}
+
+const djangoVenueName = "django"
+
 func Django(c *colly.Collector) {
-	earlySet := make(map[string]string, 0)
-	lateSet := make(map[string]string, 0)
+	c.OnHTML("article.event_card", func(e *colly.HTMLElement) {
+		var earlyEventData DjangoData
+		var lateEventData DjangoData
+		earlyEventData.AppendVenue(djangoVenueName)
+		lateEventData.AppendVenue(djangoVenueName)
+		earlyEventData.AppendCurrentTime()
+		lateEventData.AppendCurrentTime()
+		parts := strings.Split(e.ChildText("p.event__info"), "\n")
+		earlyEventData.AppendEventDate(parts[0])
+		earlyEventData.AppendEventTime(parts[2])
+		lateEventData.AppendEventDate(parts[0])
+		lateEventData.AppendEventTime(parts[2])
+		earlyEventData.AppendEventTitle(e.ChildText("h3"))
+		earlyEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
+		earlyEventData.AppendEventImage(e.ChildAttr("img", "src"))
+		utils.PostVenueData(djangoVenueName, earlyEventData)
+		lateEventData.AppendEventTitle(e.ChildText("h3"))
+		lateEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
+		lateEventData.AppendEventImage(e.ChildAttr("img", "src"))
+		utils.PostVenueData(djangoVenueName, lateEventData)
 
-	c.OnHTML("article", func(e *colly.HTMLElement) {
-		if e.Index == 1 {
-			// Add band name
-			AppendEventTitle(&earlySet, e.ChildText("h3"))
-
-			// Add details url
-			appendDetailsUrl(&earlySet, e.ChildAttr("a.details-container", "href"))
-		}
-
-		if e.Index == 2 {
-			// Add band name
-			AppendEventTitle(&lateSet, e.ChildText("h3"))
-
-			// Add details url
-			appendDetailsUrl(&lateSet, e.ChildAttr("a.details-container", "href"))
-		}
 	})
 
 	c.Visit("https://www.thedjangonyc.com/events")
-	fmt.Println("earlySet: ", earlySet)
-	fmt.Println("lateSet: ", lateSet)
-	utils.PostVenueData("django", &earlySet)
-	utils.PostVenueData("django", &lateSet)
-}
-
-func AppendEventTitle(setData *map[string]string, bandName string) {
-	(*setData)["eventTitle"] = bandName
-}
-
-func appendDetailsUrl(setData *map[string]string, url string) {
-	(*setData)["detailsUrl"] = url
 }
