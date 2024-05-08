@@ -62,10 +62,11 @@ func (data *EventInfo) AppendCurrentTime() {
 type ScraperFunc func(*colly.Collector)
 
 var ScraperMap = map[string]ScraperFunc{
-	"smalls":   SmallsLiveScraper,
-	"vanguard": Vanguard,
-	"django":   Django,
-	"smoke":    Smoke,
+	"smalls":      SmallsLiveScraper,
+	"vanguard":    Vanguard,
+	"django":      Django,
+	"smoke":       Smoke,
+	"ornithology": Ornithology,
 }
 
 func Scraper() {
