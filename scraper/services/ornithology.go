@@ -29,13 +29,13 @@ func Ornithology(c *colly.Collector) {
 	}
 	c.OnHTML("div.eventlist-column-info", func(e *colly.HTMLElement) {
 		var eventData OrnithologyData
+		eventData.AppendVenue(ornithologyVenueName)
 		linkUrl := visitUrl
 		extractedHref := e.ChildAttr("a.eventlist-button", "href")
 		modifiedURL := strings.Replace(linkUrl, "/events-2", "", 1)
 		finalURL := modifiedURL + extractedHref
 		eventData.AppendEventLink(finalURL)
 		eventData.AppendCurrentTime()
-		eventData.AppendVenue(ornithologyVenueName)
 		eventTitle := e.ChildText("h1 > a")
 		eventData.AppendEventTitle(eventTitle)
 		appendEventTime(eventTitle, &eventData)

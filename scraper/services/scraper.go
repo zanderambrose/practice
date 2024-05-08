@@ -1,8 +1,10 @@
 package scraper
 
 import (
+	"fmt"
 	"github.com/gocolly/colly"
 	"strings"
+	"time"
 	"whoshittin/scraper/utils"
 )
 
@@ -10,7 +12,7 @@ type EventInfo struct {
 	Venue       string      `json:"venue" bson:"venue"`
 	Band        []Performer `json:"band" bson:"band"`
 	EventTime   string      `json:"eventTime" bson:"eventTime"`
-	EventDate   string      `json:"eventDate" bson:"eventDate"`
+	EventDate   EventDate   `json:"eventDate" bson:"eventDate"`
 	CurrentTime string      `json:"currentTime" bson:"currentTime"`
 	EventTitle  string      `json:"eventTitle" bson:"eventTitle"`
 	EventImage  string      `json:"eventImage" bson:"eventImage"`
@@ -20,6 +22,11 @@ type EventInfo struct {
 type Performer struct {
 	Instrument string `json:"instrument"`
 	Name       string `json:"name"`
+}
+
+type EventDate struct {
+	EventDate           string    `json:"eventDate" bson:"eventDate"`
+	EventDateNormalized time.Time `json:"eventDateNormalized" bson:"eventDateNormalized"`
 }
 
 func (data *EventInfo) AppendEventTitle(eventTitle string) {
@@ -35,7 +42,12 @@ func (data *EventInfo) AppendEventTime(setTime string) {
 }
 
 func (data *EventInfo) AppendEventDate(eventDate string) {
-	data.EventDate = eventDate
+	data.EventDate.EventDate = eventDate
+	normalizedDate, err := utils.NormalizeDate(eventDate, data.Venue)
+	if err != nil {
+		fmt.Println("Normalized Date error", err)
+	}
+	data.EventDate.EventDateNormalized = normalizedDate
 }
 
 func (data *EventInfo) AppendVenue(venue string) {
