@@ -38,8 +38,15 @@ func Ornithology(c *colly.Collector) {
 		eventData.AppendCurrentTime()
 		eventData.AppendVenue(ornithologyVenueName)
 		eventData.AppendEventTitle(e.ChildText("h1 > a"))
-		eventData.AppendEventDate(e.ChildText("time.event-date"))
 		eventData.AppendEventImage(e.ChildAttr("img", "src"))
+
+		var isElementFound bool = false
+		e.ForEach("time.event-date", func(_ int, child *colly.HTMLElement) {
+			if !isElementFound {
+				eventData.AppendEventDate(child.Text)
+				isElementFound = true
+			}
+		})
 
 		e.ForEach("div.sqs-html-content > p", func(_ int, p *colly.HTMLElement) {
 			var performer Performer
