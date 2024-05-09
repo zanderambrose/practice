@@ -4,13 +4,13 @@ import (
 	"github.com/gocolly/colly"
 	"strings"
 	"whoshittin/scraper/utils"
+	"whoshittin/scraper/venueNames"
 )
 
 type OrnithologyData struct {
 	EventInfo
 }
 
-const ornithologyVenueName = "ornithology"
 const visitUrl = "https://www.ornithologyjazzclub.com/events-2"
 
 func Ornithology(c *colly.Collector) {
@@ -29,7 +29,7 @@ func Ornithology(c *colly.Collector) {
 	}
 	c.OnHTML("div.eventlist-column-info", func(e *colly.HTMLElement) {
 		var eventData OrnithologyData
-		eventData.AppendVenue(ornithologyVenueName)
+		eventData.AppendVenue(venueNames.OrnithologyVenueName)
 		linkUrl := visitUrl
 		extractedHref := e.ChildAttr("a.eventlist-button", "href")
 		modifiedURL := strings.Replace(linkUrl, "/events-2", "", 1)
@@ -63,7 +63,7 @@ func Ornithology(c *colly.Collector) {
 			}
 			eventData.AddBandMember(performer)
 		})
-		utils.PostVenueData(ornithologyVenueName, eventData)
+		utils.PostVenueData(venueNames.OrnithologyVenueName, eventData)
 	})
 	c.Visit(visitUrl)
 }

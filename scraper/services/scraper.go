@@ -75,6 +75,7 @@ type ScraperFunc func(*colly.Collector)
 
 var ScraperMap = map[string]ScraperFunc{
 	"smalls":      SmallsLiveScraper,
+	"mezzrow":     SmallsLiveScraper,
 	"vanguard":    Vanguard,
 	"django":      Django,
 	"smoke":       Smoke,
