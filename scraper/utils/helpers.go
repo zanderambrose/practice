@@ -7,8 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
+	"whoshittin/scraper/venueNames"
 )
 
 var CTX = context.Background()
@@ -44,28 +46,38 @@ func GetCurrentTime() string {
 const standardLayout = "2006-01-02"
 
 func NormalizeDate(dateString string, venue string) (time.Time, error) {
+	currentYear := strconv.Itoa(time.Now().Year())
 	venueDateFormats := map[string]string{
 		"ornithology":  "Monday, January 2, 2006",
 		"ornithology2": "Mon, January 2, 2006",
 		"ornithology3": "Mon, Apr 2, 2006",
+		"smalls":       "Mon Jan 02 2006",
+		"mezzrow":      "Mon Jan 02 2006",
 	}
 
-	parsedDate, err := time.Parse(venueDateFormats[venue], dateString)
-	if err != nil {
-		parsedDate, err = time.Parse(venueDateFormats[venue+"2"], dateString)
+	var parsedDate time.Time
+	var err error
+
+	if venue == venueNames.Smalls || venue == venueNames.Mezzrow {
+		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)
+
+	}
+	if venue == venueNames.OrnithologyVenueName {
+		parsedDate, err = time.Parse(venueDateFormats[venue], dateString)
 		if err != nil {
-			parsedDate, err = time.Parse(venueDateFormats[venue+"3"], dateString)
+			parsedDate, err = time.Parse(venueDateFormats[venue+"2"], dateString)
 			if err != nil {
-				fmt.Println("Error formatting ", venue, " data.")
-				return time.Time{}, errors.New("Error formatting venue data")
+				parsedDate, err = time.Parse(venueDateFormats[venue+"3"], dateString)
+				if err != nil {
+					fmt.Println("Error formatting ", venue, " data.")
+					return time.Time{}, errors.New("Error formatting venue data")
+				}
 			}
 		}
 	}
 
 	normalizedDateStr := parsedDate.Format(standardLayout)
-	fmt.Println("normalizedDateStr: ", normalizedDateStr)
 	normalizedDate, err := time.Parse(standardLayout, normalizedDateStr)
-	fmt.Println("normalizedDate: ", normalizedDate)
 	if err != nil {
 		return time.Time{}, err
 	}

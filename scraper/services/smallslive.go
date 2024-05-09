@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gocolly/colly"
-	"reflect"
 	"strings"
 	"whoshittin/scraper/utils"
 )
@@ -20,6 +19,14 @@ func SmallsLiveScraper(c *colly.Collector) {
 		ariaLabel := e.ChildAttr("a", "aria-label")
 		eventDetails := strings.Split(ariaLabel, ", ")
 
+		// Get venue info
+		venueInfo, err := getEventDetails(eventDetails, -2)
+		if err != nil {
+			fmt.Println("Error getting venue information")
+		}
+		venue := strings.Split(venueInfo, "Live at ")
+		eventData.AppendVenue(venue[1])
+
 		// Get event img
 		e.ForEach("div.event-picture", func(_ int, elem *colly.HTMLElement) {
 			imgSrc := elem.ChildAttr("img", "src")
@@ -29,14 +36,6 @@ func SmallsLiveScraper(c *colly.Collector) {
 		// Get event title
 		eventTitle := e.ChildText("p.event-info-title")
 		eventData.AppendEventTitle(eventTitle)
-
-		// Get venue info
-		venueInfo, err := getEventDetails(eventDetails, -2)
-		if err != nil {
-			fmt.Println("Error getting venue information")
-		}
-		venue := strings.Split(venueInfo, "Live at ")
-		eventData.AppendVenue(venue[1])
 
 		// Get set time info
 		setTimeInfo, err := getEventDetails(eventDetails, -1)
@@ -48,8 +47,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 
 		// Get set date info
 		e.ForEach("div.sub-info__date-time", func(_ int, elem *colly.HTMLElement) {
-			info := elem.ChildText("div.title5:first-child")
-			eventData.AppendEventDate(info)
+			eventData.AppendEventDate(elem.ChildText("div.title5:first-child"))
 		})
 
 		// Get performers info
@@ -86,17 +84,4 @@ func getEventDetails(details []string, target int) (string, error) {
 	}
 
 	return "", errors.New("Cannot get index")
-}
-
-func printStruct(s interface{}) {
-	v := reflect.ValueOf(s)
-	t := v.Type()
-
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldName := t.Field(i).Name
-		fieldValue := field.Interface()
-
-		fmt.Printf("%s: %v\n", fieldName, fieldValue)
-	}
 }

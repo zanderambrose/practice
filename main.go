@@ -6,12 +6,7 @@ import (
 )
 
 func main() {
-	// Start API service
-	fmt.Println("Starting API service...")
 	startAPIService()
-
-	// Start scraper service
-	fmt.Println("Starting Scraper service...")
 	startScraperService()
 }
 
