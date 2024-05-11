@@ -13,6 +13,11 @@ import (
 	"whoshittin/scraper/venueNames"
 )
 
+type NormalizedEventTime struct {
+	Start string
+	End   string
+}
+
 var CTX = context.Background()
 
 func PostVenueData(url string, postable interface{}) *http.Response {
@@ -43,7 +48,52 @@ func GetCurrentTime() string {
 	return currentTime.Format("2006-01-02 15:04:05")
 }
 
-const standardLayout = "2006-01-02"
+const STANDARD_DATE_LAYOUT = "2006-01-02"
+const STANDARD_TIME_LAYOUT = "3:04 PM"
+
+func formatTimeString(time time.Time) string {
+	return time.Format(STANDARD_TIME_LAYOUT)
+}
+
+func parseTimeString(timeStr string) (time.Time, error) {
+	return time.Parse(STANDARD_TIME_LAYOUT, timeStr)
+}
+
+func NormalizeTime(timeString string) (string, string, error) {
+	times := strings.Split(timeString, "-")
+	startTimeStr := strings.Trim(times[0], " ")
+	endTimeStr := strings.Trim(times[1], " ")
+	startTime, err := parseTimeString(startTimeStr)
+	if err != nil {
+		fmt.Println("Error parsing start time:", err)
+		return "", "", err
+	}
+	endTime, err := parseTimeString(endTimeStr)
+	if err != nil {
+		fmt.Println("Error parsing end time:", err)
+		return "", "", err
+	}
+	return formatTimeString(startTime), formatTimeString(endTime), nil
+}
+
+func NormalizeTimes(timeString string) ([]NormalizedEventTime, error) {
+	var eventTimes []NormalizedEventTime
+	times := strings.Split(timeString, "&")
+	for i := 0; i < len(times); i++ {
+		var eventTime NormalizedEventTime
+		startTimeStr := strings.Trim(times[i], " ")
+		parsedStartTime, err := parseTimeString(startTimeStr)
+		if err != nil {
+			fmt.Println("Error parsing start time:", err)
+			return eventTimes, errors.New(err.Error())
+		}
+		parsedEndTime := parsedStartTime.Add(time.Hour + 15*time.Minute)
+		eventTime.Start = formatTimeString(parsedStartTime)
+		eventTime.End = formatTimeString(parsedEndTime)
+		eventTimes = append(eventTimes, eventTime)
+	}
+	return eventTimes, nil
+}
 
 func NormalizeDate(dateString string, venue string) (time.Time, error) {
 	currentYear := strconv.Itoa(time.Now().Year())
@@ -76,8 +126,8 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 		}
 	}
 
-	normalizedDateStr := parsedDate.Format(standardLayout)
-	normalizedDate, err := time.Parse(standardLayout, normalizedDateStr)
+	normalizedDateStr := parsedDate.Format(STANDARD_DATE_LAYOUT)
+	normalizedDate, err := time.Parse(STANDARD_DATE_LAYOUT, normalizedDateStr)
 	if err != nil {
 		return time.Time{}, err
 	}

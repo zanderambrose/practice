@@ -11,7 +11,7 @@ import (
 type EventInfo struct {
 	Venue       string      `json:"venue" bson:"venue"`
 	Band        []Performer `json:"band" bson:"band"`
-	EventTime   string      `json:"eventTime" bson:"eventTime"`
+	EventTime   []EventTime `json:"eventTime" bson:"eventTime"`
 	EventDate   EventDate   `json:"eventDate" bson:"eventDate"`
 	CurrentTime string      `json:"currentTime" bson:"currentTime"`
 	EventTitle  string      `json:"eventTitle" bson:"eventTitle"`
@@ -25,8 +25,13 @@ type Performer struct {
 }
 
 type EventDate struct {
-	EventDate           string    `json:"eventDate" bson:"eventDate"`
-	EventDateNormalized time.Time `json:"eventDateNormalized" bson:"eventDateNormalized"`
+	ParsedDate string    `json:"parsedDate" bson:"parsedDate"`
+	Date       time.Time `json:"date" bson:"date"`
+}
+
+type EventTime struct {
+	Start string `json:"start" bson:"start"`
+	End   string `json:"end" bson:"end"`
 }
 
 func (data *EventInfo) AppendEventTitle(eventTitle string) {
@@ -38,16 +43,35 @@ func (data *EventInfo) AppendEventLink(eventLink string) {
 }
 
 func (data *EventInfo) AppendEventTime(setTime string) {
-	data.EventTime = setTime
+	var newTime EventTime
+	if strings.Contains(setTime, "-") {
+		start, end, err := utils.NormalizeTime(setTime)
+		if err != nil {
+			fmt.Println("Error normalizing time: ", err)
+		}
+		newTime.Start = start
+		newTime.End = end
+		data.EventTime = append(data.EventTime, newTime)
+	} else if strings.Contains(setTime, "&") {
+		eventTimes, err := utils.NormalizeTimes(setTime)
+		if err != nil {
+			fmt.Println("Error normalizing times: ", err)
+		}
+		for i := 0; i < len(eventTimes); i++ {
+			newTime.Start = eventTimes[i].Start
+			newTime.End = eventTimes[i].End
+			data.EventTime = append(data.EventTime, newTime)
+		}
+	}
 }
 
 func (data *EventInfo) AppendEventDate(eventDate string) {
-	data.EventDate.EventDate = eventDate
+	data.EventDate.ParsedDate = eventDate
 	normalizedDate, err := utils.NormalizeDate(eventDate, data.Venue)
 	if err != nil {
 		fmt.Println("Normalized Date error", err)
 	}
-	data.EventDate.EventDateNormalized = normalizedDate
+	data.EventDate.Date = normalizedDate
 }
 
 func (data *EventInfo) AppendVenue(venue string) {
