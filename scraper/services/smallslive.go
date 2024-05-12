@@ -8,13 +8,9 @@ import (
 	"whoshittin/scraper/utils"
 )
 
-type SmallsLiveData struct {
-	EventInfo
-}
-
 func SmallsLiveScraper(c *colly.Collector) {
 	c.OnHTML("article.event-display-today-and-tomorrow", func(e *colly.HTMLElement) {
-		var eventData SmallsLiveData
+		var eventData EventInfo
 
 		ariaLabel := e.ChildAttr("a", "aria-label")
 		eventDetails := strings.Split(ariaLabel, ", ")

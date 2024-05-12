@@ -7,10 +7,6 @@ import (
 	"whoshittin/scraper/venueNames"
 )
 
-type OrnithologyData struct {
-	EventInfo
-}
-
 const visitUrl = "https://www.ornithologyjazzclub.com/events-2"
 
 func Ornithology(c *colly.Collector) {
@@ -28,8 +24,8 @@ func Ornithology(c *colly.Collector) {
 		"organ":     "organ",
 	}
 	c.OnHTML("div.eventlist-column-info", func(e *colly.HTMLElement) {
-		var eventData OrnithologyData
-		eventData.AppendVenue(venueNames.OrnithologyVenueName)
+		var eventData EventInfo
+		eventData.AppendVenue(venueNames.Ornithology)
 		linkUrl := visitUrl
 		extractedHref := e.ChildAttr("a.eventlist-button", "href")
 		modifiedURL := strings.Replace(linkUrl, "/events-2", "", 1)
@@ -63,7 +59,7 @@ func Ornithology(c *colly.Collector) {
 			}
 			eventData.AddBandMember(performer)
 		})
-		utils.PostVenueData(venueNames.OrnithologyVenueName, eventData)
+		utils.PostVenueData(venueNames.Ornithology, eventData)
 	})
 	c.Visit(visitUrl)
 }

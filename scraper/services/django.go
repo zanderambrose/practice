@@ -7,14 +7,10 @@ import (
 	"whoshittin/scraper/venueNames"
 )
 
-type DjangoData struct {
-	EventInfo
-}
-
 func Django(c *colly.Collector) {
 	c.OnHTML("article.event_card", func(e *colly.HTMLElement) {
-		var earlyEventData DjangoData
-		var lateEventData DjangoData
+		var earlyEventData EventInfo
+		var lateEventData EventInfo
 		earlyEventData.AppendVenue(venueNames.Django)
 		lateEventData.AppendVenue(venueNames.Django)
 		earlyEventData.AppendCurrentTime()

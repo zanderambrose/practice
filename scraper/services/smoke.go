@@ -7,20 +7,16 @@ import (
 	"whoshittin/scraper/utils"
 )
 
-type SmokeData struct {
-	EventInfo
-}
-
 const smokeVenueName = "smoke"
 
 func Smoke(c *colly.Collector) {
 	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
-		var eventData SmokeData
+		var eventData EventInfo
+		eventData.AppendVenue(smokeVenueName)
 		eventData.AppendCurrentTime()
 		eventData.AppendEventTitle(e.ChildText("h3.text-3xl"))
 		eventData.AppendEventDate(e.ChildText("h4.day-of-week"))
 		eventData.AppendEventImage(e.ChildAttr("img", "src"))
-		eventData.AppendVenue(smokeVenueName)
 
 		descriptionText := e.ChildText("span")
 		re := regexp.MustCompile(`([^\s–]+ [^\s–]+) – ([^\n]+)`)

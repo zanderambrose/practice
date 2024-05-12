@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 	"whoshittin/scraper/utils"
+	"whoshittin/scraper/venueNames"
 )
 
 type EventInfo struct {
@@ -99,12 +100,12 @@ func (data *EventInfo) AppendCurrentTime() {
 type ScraperFunc func(*colly.Collector)
 
 var ScraperMap = map[string]ScraperFunc{
-	"smalls":      SmallsLiveScraper,
-	"mezzrow":     SmallsLiveScraper,
-	"vanguard":    Vanguard,
-	"django":      Django,
-	"smoke":       Smoke,
-	"ornithology": Ornithology,
+	venueNames.Smalls:      SmallsLiveScraper,
+	venueNames.Mezzrow:     SmallsLiveScraper,
+	venueNames.Vanguard:    Vanguard,
+	venueNames.Django:      Django,
+	venueNames.Smoke:       Smoke,
+	venueNames.Ornithology: Ornithology,
 }
 
 func Scraper() {

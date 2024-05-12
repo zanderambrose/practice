@@ -103,12 +103,12 @@ func NormalizeTimes(timeString string) ([]NormalizedEventTime, error) {
 func NormalizeDate(dateString string, venue string) (time.Time, error) {
 	currentYear := strconv.Itoa(time.Now().Year())
 	venueDateFormats := map[string]string{
-		venueNames.OrnithologyVenueName:       "Monday, January 2, 2006",
-		venueNames.OrnithologyVenueName + "2": "Mon, January 2, 2006",
-		venueNames.OrnithologyVenueName + "3": "Mon, Apr 2, 2006",
-		venueNames.Smalls:                     "Mon Jan 02 2006",
-		venueNames.Mezzrow:                    "Mon Jan 02 2006",
-		venueNames.Django:                     "Monday, January 2 2006",
+		venueNames.Ornithology:       "Monday, January 2, 2006",
+		venueNames.Ornithology + "2": "Mon, January 2, 2006",
+		venueNames.Ornithology + "3": "Mon, Apr 2, 2006",
+		venueNames.Smalls:            "Mon Jan 02 2006",
+		venueNames.Mezzrow:           "Mon Jan 02 2006",
+		venueNames.Django:            "Monday, January 2 2006",
 	}
 
 	var parsedDate time.Time
@@ -123,7 +123,7 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)
 
 	}
-	if venue == venueNames.OrnithologyVenueName {
+	if venue == venueNames.Ornithology {
 		parsedDate, err = time.Parse(venueDateFormats[venue], dateString)
 		if err != nil {
 			parsedDate, err = time.Parse(venueDateFormats[venue+"2"], dateString)
