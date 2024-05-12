@@ -70,8 +70,8 @@ func (data *EventInfo) AppendEventDate(eventDate string) {
 	if err != nil {
 		fmt.Println("Normalized Date error", err)
 	}
-	formatteDate := normalizedDate.Format(utils.STANDARD_DATE_REPRESENTATION_LAYOUT)
-	data.EventDate.FormattedDate = formatteDate
+	formattedDate := normalizedDate.Format(utils.STANDARD_DATE_REPRESENTATION_LAYOUT)
+	data.EventDate.FormattedDate = formattedDate
 	data.EventDate.Date = normalizedDate
 }
 

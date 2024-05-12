@@ -4,20 +4,19 @@ import (
 	"github.com/gocolly/colly"
 	"strings"
 	"whoshittin/scraper/utils"
+	"whoshittin/scraper/venueNames"
 )
 
 type DjangoData struct {
 	EventInfo
 }
 
-const djangoVenueName = "django"
-
 func Django(c *colly.Collector) {
 	c.OnHTML("article.event_card", func(e *colly.HTMLElement) {
 		var earlyEventData DjangoData
 		var lateEventData DjangoData
-		earlyEventData.AppendVenue(djangoVenueName)
-		lateEventData.AppendVenue(djangoVenueName)
+		earlyEventData.AppendVenue(venueNames.Django)
+		lateEventData.AppendVenue(venueNames.Django)
 		earlyEventData.AppendCurrentTime()
 		lateEventData.AppendCurrentTime()
 		parts := strings.Split(e.ChildText("p.event__info"), "\n")
@@ -28,11 +27,11 @@ func Django(c *colly.Collector) {
 		earlyEventData.AppendEventTitle(e.ChildText("h3"))
 		earlyEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
 		earlyEventData.AppendEventImage(e.ChildAttr("img", "src"))
-		utils.PostVenueData(djangoVenueName, earlyEventData)
+		utils.PostVenueData(venueNames.Django, earlyEventData)
 		lateEventData.AppendEventTitle(e.ChildText("h3"))
 		lateEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
 		lateEventData.AppendEventImage(e.ChildAttr("img", "src"))
-		utils.PostVenueData(djangoVenueName, lateEventData)
+		utils.PostVenueData(venueNames.Django, lateEventData)
 	})
 	c.Visit("https://www.thedjangonyc.com/events")
 }

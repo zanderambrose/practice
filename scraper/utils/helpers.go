@@ -51,13 +51,17 @@ func GetCurrentTime() string {
 const STANDARD_DATE_LAYOUT = "2006-01-02"
 const STANDARD_DATE_REPRESENTATION_LAYOUT = "Mon Jan _2 2006"
 const STANDARD_TIME_LAYOUT = "3:04 PM"
+const STANDARD_TIME_LAYOUT2 = "3:04PM"
 
 func formatTimeString(time time.Time) string {
 	return time.Format(STANDARD_TIME_LAYOUT)
 }
 
 func parseTimeString(timeStr string) (time.Time, error) {
-	return time.Parse(STANDARD_TIME_LAYOUT, timeStr)
+	if strings.Contains(timeStr, " ") {
+		return time.Parse(STANDARD_TIME_LAYOUT, timeStr)
+	}
+	return time.Parse(STANDARD_TIME_LAYOUT2, timeStr)
 }
 
 func NormalizeTime(timeString string) (string, string, error) {
@@ -99,15 +103,21 @@ func NormalizeTimes(timeString string) ([]NormalizedEventTime, error) {
 func NormalizeDate(dateString string, venue string) (time.Time, error) {
 	currentYear := strconv.Itoa(time.Now().Year())
 	venueDateFormats := map[string]string{
-		"ornithology":  "Monday, January 2, 2006",
-		"ornithology2": "Mon, January 2, 2006",
-		"ornithology3": "Mon, Apr 2, 2006",
-		"smalls":       "Mon Jan 02 2006",
-		"mezzrow":      "Mon Jan 02 2006",
+		venueNames.OrnithologyVenueName:       "Monday, January 2, 2006",
+		venueNames.OrnithologyVenueName + "2": "Mon, January 2, 2006",
+		venueNames.OrnithologyVenueName + "3": "Mon, Apr 2, 2006",
+		venueNames.Smalls:                     "Mon Jan 02 2006",
+		venueNames.Mezzrow:                    "Mon Jan 02 2006",
+		venueNames.Django:                     "Monday, January 2 2006",
 	}
 
 	var parsedDate time.Time
 	var err error
+
+	if venue == venueNames.Django {
+		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)
+
+	}
 
 	if venue == venueNames.Smalls || venue == venueNames.Mezzrow {
 		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)
