@@ -5,14 +5,13 @@ import (
 	"regexp"
 	"strings"
 	"whoshittin/scraper/utils"
+	"whoshittin/scraper/venueNames"
 )
-
-const smokeVenueName = "smoke"
 
 func Smoke(c *colly.Collector) {
 	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
 		var eventData EventInfo
-		eventData.AppendVenue(smokeVenueName)
+		eventData.AppendVenue(venueNames.Smoke)
 		eventData.AppendCurrentTime()
 		eventData.AppendEventTitle(e.ChildText("h3.text-3xl"))
 		eventData.AppendEventDate(e.ChildText("h4.day-of-week"))
@@ -43,7 +42,7 @@ func Smoke(c *colly.Collector) {
 			allShowTimes += showTime
 		})
 		eventData.AppendEventTime(allShowTimes)
-		utils.PostVenueData(smokeVenueName, eventData)
+		utils.PostVenueData(venueNames.Smoke, eventData)
 	})
 	c.Visit("https://tickets.smokejazz.com/")
 
