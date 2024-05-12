@@ -49,6 +49,7 @@ func GetCurrentTime() string {
 }
 
 const STANDARD_DATE_LAYOUT = "2006-01-02"
+const STANDARD_DATE_REPRESENTATION_LAYOUT = "Mon Jan _2 2006"
 const STANDARD_TIME_LAYOUT = "3:04 PM"
 
 func formatTimeString(time time.Time) string {

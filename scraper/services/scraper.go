@@ -25,8 +25,8 @@ type Performer struct {
 }
 
 type EventDate struct {
-	ParsedDate string    `json:"parsedDate" bson:"parsedDate"`
-	Date       time.Time `json:"date" bson:"date"`
+	FormattedDate string    `json:"formattedDate" bson:"formattedDate"`
+	Date          time.Time `json:"date" bson:"date"`
 }
 
 type EventTime struct {
@@ -66,11 +66,12 @@ func (data *EventInfo) AppendEventTime(setTime string) {
 }
 
 func (data *EventInfo) AppendEventDate(eventDate string) {
-	data.EventDate.ParsedDate = eventDate
 	normalizedDate, err := utils.NormalizeDate(eventDate, data.Venue)
 	if err != nil {
 		fmt.Println("Normalized Date error", err)
 	}
+	formatteDate := normalizedDate.Format(utils.STANDARD_DATE_REPRESENTATION_LAYOUT)
+	data.EventDate.FormattedDate = formatteDate
 	data.EventDate.Date = normalizedDate
 }
 
