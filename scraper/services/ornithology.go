@@ -48,23 +48,25 @@ func Ornithology(c *colly.Collector) {
 		e.ForEach("div.sqs-html-content > p", func(_ int, p *colly.HTMLElement) {
 			var performer Performer
 			originalText := p.Text
-			formattedText := strings.ReplaceAll(strings.ReplaceAll(originalText, "(", " - "), ")", "")
-			splitText := strings.Split(formattedText, " - ")
-			performer.Name = splitText[0]
-			value, ok := instrumentMap[splitText[1]]
-			if ok {
-				performer.Instrument = value
-			} else {
-				performer.Instrument = splitText[1]
+			if strings.Contains(originalText, "(") && strings.Contains(originalText, ")") {
+				formattedText := strings.ReplaceAll(strings.ReplaceAll(originalText, "(", " - "), ")", "")
+				splitText := strings.Split(formattedText, " - ")
+				performer.Name = splitText[0]
+				value, ok := instrumentMap[splitText[1]]
+				if ok {
+					performer.Instrument = value
+				} else {
+					performer.Instrument = splitText[1]
+				}
+				eventData.AddBandMember(performer)
 			}
-			eventData.AddBandMember(performer)
 		})
 		utils.PostVenueData(venueNames.Ornithology, eventData)
 	})
 	c.Visit(visitUrl)
 }
 
-func appendEventTime(title string, eventData *OrnithologyData) {
+func appendEventTime(title string, eventData *EventInfo) {
 	if title == "Jazz Dialogue Open Jam" {
 		eventData.AppendEventTime("9:00PM - 12:00AM")
 	} else {
