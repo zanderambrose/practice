@@ -17,6 +17,7 @@ type VanguardEventInfo struct {
 func (vanguardEvent *VanguardEventInfo) PostVanguardData(eventDate string) {
 	if strings.Contains(strings.ToLower(eventDate), "every monday night") {
 		vanguardEvent.EventDate.FormattedDate = eventDate
+		vanguardEvent.EventDate.Date = time.Now().Local().Truncate(24 * time.Hour)
 		utils.PostVenueData(venueNames.Vanguard, vanguardEvent)
 	}
 	eventDates := buildDateSlice(eventDate)
