@@ -1,27 +1,45 @@
 package scraper
 
 import (
+	"fmt"
 	"github.com/gocolly/colly"
 	"regexp"
 	"strings"
+	"time"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
+
+type VanguardEventInfo struct {
+	EventInfo
+}
+
+func (vanguardEvent *VanguardEventInfo) PostVanguardData(eventDate string) {
+	if strings.Contains(strings.ToLower(eventDate), "every monday night") {
+		vanguardEvent.EventDate.FormattedDate = eventDate
+		utils.PostVenueData(venueNames.Vanguard, vanguardEvent)
+	}
+	eventDates := buildDateSlice(eventDate)
+
+	for i := 0; i < len(eventDates); i++ {
+		vanguardEvent.EventDate.Date = eventDates[i]
+		vanguardEvent.EventDate.FormattedDate = eventDates[i].Format(utils.STANDARD_DATE_REPRESENTATION_LAYOUT)
+		utils.PostVenueData(venueNames.Vanguard, vanguardEvent)
+	}
+}
 
 const performanceTime = "8:00 PM & 10:00 PM"
 const vanguardJazzOrchestra = "VANGUARD JAZZ ORCHESTRA"
 
 func Vanguard(c *colly.Collector) {
 	c.OnHTML("div.container", func(e *colly.HTMLElement) {
-		var eventData EventInfo
+		var eventData VanguardEventInfo
 		eventTitle := e.ChildText("div.event-details > h2")
 		if eventTitle != "COMING SOON!" && eventTitle != "" {
 			eventData.AppendVenue(venueNames.Vanguard)
 			eventData.AppendCurrentTime()
 			eventData.AppendEventTitle(eventTitle)
 			eventData.AppendEventTime(performanceTime)
-			trimmedEventText := strings.TrimSpace(replaceWhitespace(e.ChildText("div.event-details > h3")))
-			eventData.AppendEventDate(trimmedEventText)
 			eventData.AppendEventImage(e.ChildAttr("img", "src"))
 
 			// TODO - HANDLE DIFFERENT BANDS FOR DIFFERENT DATES IN H4 LOOPS
@@ -41,7 +59,8 @@ func Vanguard(c *colly.Collector) {
 					// TODO - Handle Vanguard jazz orchestra band member formatting
 				}
 			})
-			utils.PostVenueData(venueNames.Vanguard, eventData)
+			trimmedEventText := strings.TrimSpace(replaceWhitespace(e.ChildText("div.event-details > h3")))
+			eventData.PostVanguardData(trimmedEventText)
 		}
 	})
 
@@ -52,4 +71,28 @@ func replaceWhitespace(input string) string {
 	// replace whitespace characters with a single space
 	re := regexp.MustCompile(`\s+`)
 	return re.ReplaceAllString(input, " ")
+}
+
+func buildDateSlice(dateString string) []time.Time {
+	parts := strings.Split(dateString, " - ")
+	if len(parts) != 2 {
+		fmt.Println("Invalid date range format: ", parts)
+		return []time.Time{}
+	}
+
+	startStr := parts[0]
+	endStr := parts[1]
+
+	startMonth, startDay := utils.ParseDate(startStr)
+	endMonth, endDay := utils.ParseDate(endStr)
+
+	start := time.Date(time.Now().Year(), startMonth, startDay, 0, 0, 0, 0, time.UTC)
+	end := time.Date(time.Now().Year(), endMonth, endDay, 0, 0, 0, 0, time.UTC)
+
+	var dates []time.Time
+
+	for d := start; d.Before(end.AddDate(0, 0, 1)); d = d.AddDate(0, 0, 1) {
+		dates = append(dates, d)
+	}
+	return dates
 }

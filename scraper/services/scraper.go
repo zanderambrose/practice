@@ -81,6 +81,8 @@ func (data *EventInfo) AppendVenue(venue string) {
 }
 
 func (data *EventInfo) AddBandMember(performer Performer) {
+	performer.Name = strings.ToLower(performer.Name)
+	performer.Instrument = strings.ToLower(performer.Instrument)
 	data.Band = append(data.Band, performer)
 }
 

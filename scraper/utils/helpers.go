@@ -141,6 +141,10 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 		}
 	}
 
+	if venue == venueNames.Vanguard {
+		return time.Time{}, errors.New("Vanguard dates are handled in own scope")
+	}
+
 	normalizedDateStr := parsedDate.Format(STANDARD_DATE_LAYOUT)
 	normalizedDate, err := time.Parse(STANDARD_DATE_LAYOUT, normalizedDateStr)
 	if err != nil {
@@ -148,4 +152,17 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 	}
 
 	return normalizedDate, nil
+}
+
+func ParseDate(dateStr string) (time.Month, int) {
+	parts := strings.Split(dateStr, " ")
+	if len(parts) != 2 {
+		return time.January, 1 // Default values
+	}
+
+	monthStr := strings.ToUpper(parts[0])
+	month, _ := time.Parse("January", monthStr) // Parse the month
+	day := 1                                    // Default day
+	fmt.Sscanf(parts[1], "%d", &day)            // Parse the day
+	return month.Month(), day
 }
