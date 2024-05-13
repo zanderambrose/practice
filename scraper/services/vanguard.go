@@ -42,6 +42,7 @@ func Vanguard(c *colly.Collector) {
 			eventData.AppendEventTitle(eventTitle)
 			eventData.AppendEventTime(performanceTime)
 			eventData.AppendEventImage(e.ChildAttr("img", "src"))
+			eventData.AppendEventLink(e.ChildAttr("a.btn-primary", "href"))
 
 			// TODO - HANDLE DIFFERENT BANDS FOR DIFFERENT DATES IN H4 LOOPS
 			e.ForEach("h4", func(_ int, bandMember *colly.HTMLElement) {
