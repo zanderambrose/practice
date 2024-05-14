@@ -7,4 +7,5 @@ const (
 	Django      = "django"
 	Vanguard    = "vanguard"
 	Smoke       = "smoke"
+	BlueNote    = "bluenote"
 )

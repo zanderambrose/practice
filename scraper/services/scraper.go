@@ -108,6 +108,7 @@ var ScraperMap = map[string]ScraperFunc{
 	venueNames.Django:      Django,
 	venueNames.Smoke:       Smoke,
 	venueNames.Ornithology: Ornithology,
+	venueNames.BlueNote:    BlueNote,
 }
 
 func Scraper() {
