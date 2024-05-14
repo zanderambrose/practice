@@ -53,11 +53,11 @@ const STANDARD_DATE_REPRESENTATION_LAYOUT = "Mon Jan _2 2006"
 const STANDARD_TIME_LAYOUT = "3:04 PM"
 const STANDARD_TIME_LAYOUT2 = "3:04PM"
 
-func formatTimeString(time time.Time) string {
+func FormatTimeString(time time.Time) string {
 	return time.Format(STANDARD_TIME_LAYOUT)
 }
 
-func parseTimeString(timeStr string) (time.Time, error) {
+func ParseTimeString(timeStr string) (time.Time, error) {
 	if strings.Contains(timeStr, " ") {
 		return time.Parse(STANDARD_TIME_LAYOUT, timeStr)
 	}
@@ -68,17 +68,17 @@ func NormalizeTime(timeString string) (string, string, error) {
 	times := strings.Split(timeString, "-")
 	startTimeStr := strings.Trim(times[0], " ")
 	endTimeStr := strings.Trim(times[1], " ")
-	startTime, err := parseTimeString(startTimeStr)
+	startTime, err := ParseTimeString(startTimeStr)
 	if err != nil {
 		fmt.Println("Error parsing start time:", err)
 		return "", "", err
 	}
-	endTime, err := parseTimeString(endTimeStr)
+	endTime, err := ParseTimeString(endTimeStr)
 	if err != nil {
 		fmt.Println("Error parsing end time:", err)
 		return "", "", err
 	}
-	return formatTimeString(startTime), formatTimeString(endTime), nil
+	return FormatTimeString(startTime), FormatTimeString(endTime), nil
 }
 
 func NormalizeTimes(timeString string) ([]NormalizedEventTime, error) {
@@ -87,14 +87,14 @@ func NormalizeTimes(timeString string) ([]NormalizedEventTime, error) {
 	for i := 0; i < len(times); i++ {
 		var eventTime NormalizedEventTime
 		startTimeStr := strings.Trim(times[i], " ")
-		parsedStartTime, err := parseTimeString(startTimeStr)
+		parsedStartTime, err := ParseTimeString(startTimeStr)
 		if err != nil {
 			fmt.Println("Error parsing start time:", err)
 			return eventTimes, errors.New(err.Error())
 		}
 		parsedEndTime := parsedStartTime.Add(time.Hour + 15*time.Minute)
-		eventTime.Start = formatTimeString(parsedStartTime)
-		eventTime.End = formatTimeString(parsedEndTime)
+		eventTime.Start = FormatTimeString(parsedStartTime)
+		eventTime.End = FormatTimeString(parsedEndTime)
 		eventTimes = append(eventTimes, eventTime)
 	}
 	return eventTimes, nil

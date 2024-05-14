@@ -63,6 +63,15 @@ func (data *EventInfo) AppendEventTime(setTime string) {
 			newTime.End = eventTimes[i].End
 			data.EventTime = append(data.EventTime, newTime)
 		}
+	} else {
+		parsedStartTime, err := utils.ParseTimeString(setTime)
+		if err != nil {
+			fmt.Println("error formatting sing time")
+		}
+		parsedEndTime := parsedStartTime.Add(time.Hour + 15*time.Minute)
+		newTime.Start = utils.FormatTimeString(parsedStartTime)
+		newTime.End = utils.FormatTimeString(parsedEndTime)
+		data.EventTime = append(data.EventTime, newTime)
 	}
 }
 
