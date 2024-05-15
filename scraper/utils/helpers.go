@@ -49,7 +49,7 @@ func GetCurrentTime() string {
 }
 
 const STANDARD_DATE_LAYOUT = "2006-01-02"
-const STANDARD_DATE_REPRESENTATION_LAYOUT = "Mon Jan _2 2006"
+const STANDARD_DATE_REPRESENTATION_LAYOUT = "Mon Jan 02 2006"
 const STANDARD_TIME_LAYOUT = "3:04 PM"
 const STANDARD_TIME_LAYOUT2 = "3:04PM"
 
@@ -110,10 +110,26 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 		venueNames.Mezzrow:           "Mon Jan 02 2006",
 		venueNames.Django:            "Monday, January 2 2006",
 		venueNames.Smoke:             "Mon, Jan 2 2006",
+		venueNames.BlueNote:          STANDARD_DATE_LAYOUT,
 	}
 
 	var parsedDate time.Time
 	var err error
+
+	if venue == venueNames.BlueNote {
+		var formattedDateString string
+		if len(dateString) == 1 {
+			formattedDateString = "0" + dateString
+		} else {
+			formattedDateString = dateString
+		}
+		today := time.Now()
+		todayFormatted := today.Format(STANDARD_DATE_LAYOUT)
+		tokens := strings.Split(todayFormatted, "-")
+		tokens[2] = formattedDateString
+		fullDate := strings.Join(tokens, "-")
+		parsedDate, err = time.Parse(venueDateFormats[venue], fullDate)
+	}
 
 	if venue == venueNames.Django {
 		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)

@@ -11,13 +11,14 @@ import (
 
 func BlueNote(c *colly.Collector) {
 	c.OnHTML("div.inner", func(e *colly.HTMLElement) {
+		dayOfTheMonth := e.ChildText("div.day")
 		e.ForEach("div.day-wrap", func(_ int, item *colly.HTMLElement) {
 			var eventData EventInfo
 			eventData.AppendVenue(venueNames.BlueNote)
 			eventData.AppendCurrentTime()
 			eventData.AppendEventTitle(item.ChildText("h3"))
-			// eventData.AppendEventDate(e.ChildText("h4.day-of-week"))
 			eventData.AppendEventLink(item.ChildAttr("a", "href"))
+			eventData.AppendEventDate(dayOfTheMonth)
 
 			// backgroundImage := item.ChildAttr("div.the-image", "style")
 			// re := regexp.MustCompile(`url\("(.+?)"\)`)
