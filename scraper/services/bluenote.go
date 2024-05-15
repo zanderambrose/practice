@@ -2,34 +2,21 @@ package scraper
 
 import (
 	"github.com/gocolly/colly"
-	// "regexp"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
-
-// TODO - Append event data and append event image
 
 func BlueNote(c *colly.Collector) {
 	c.OnHTML("div.inner", func(e *colly.HTMLElement) {
 		dayOfTheMonth := e.ChildText("div.day")
 		e.ForEach("div.day-wrap", func(_ int, item *colly.HTMLElement) {
 			var eventData EventInfo
+			detailsUrl := item.ChildAttr("a", "href")
 			eventData.AppendVenue(venueNames.BlueNote)
 			eventData.AppendCurrentTime()
 			eventData.AppendEventTitle(item.ChildText("h3"))
-			eventData.AppendEventLink(item.ChildAttr("a", "href"))
+			eventData.AppendEventLink(detailsUrl)
 			eventData.AppendEventDate(dayOfTheMonth)
-
-			// backgroundImage := item.ChildAttr("div.the-image", "style")
-			// re := regexp.MustCompile(`url\("(.+?)"\)`)
-			// matches := re.FindStringSubmatch(backgroundImage)
-			// fmt.Println("matches:", matches)
-			// if len(matches) >= 2 {
-			// 	url := matches[1]
-			// 	// Print or use the extracted URL
-			// 	fmt.Println("URL:", url)
-			// }
-			// eventData.AppendEventImage(item.ChildAttr("div.the-image", "src"))
 
 			var allShowTimes string
 			item.ForEach("time", func(_ int, time *colly.HTMLElement) {
@@ -40,8 +27,18 @@ func BlueNote(c *colly.Collector) {
 				allShowTimes += eventTime
 			})
 			eventData.AppendEventTime(allShowTimes)
-			utils.PostVenueData(venueNames.BlueNote, eventData)
+			findEventImage(&eventData, detailsUrl)
 		})
 	})
 	c.Visit("https://www.bluenotejazz.com/nyc/shows/?calendar_view")
+}
+
+func findEventImage(eventData *EventInfo, visitUrl string) {
+	c := colly.NewCollector()
+	c.OnHTML("main", func(e *colly.HTMLElement) {
+		image := e.ChildAttr("img.the-group-image", "src")
+		eventData.AppendEventImage(image)
+		utils.PostVenueData(venueNames.BlueNote, eventData)
+	})
+	c.Visit(visitUrl)
 }
