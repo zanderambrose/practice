@@ -8,4 +8,5 @@ const (
 	Vanguard    = "vanguard"
 	Smoke       = "smoke"
 	BlueNote    = "bluenote"
+	Zinc        = "zinc"
 )

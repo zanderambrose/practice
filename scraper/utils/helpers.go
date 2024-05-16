@@ -111,6 +111,7 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 		venueNames.Django:            "Monday, January 2 2006",
 		venueNames.Smoke:             "Mon, Jan 2 2006",
 		venueNames.BlueNote:          STANDARD_DATE_LAYOUT,
+		venueNames.Zinc:              "Mon Jan 02 2006",
 	}
 
 	var parsedDate time.Time
@@ -139,7 +140,7 @@ func NormalizeDate(dateString string, venue string) (time.Time, error) {
 		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)
 	}
 
-	if venue == venueNames.Smalls || venue == venueNames.Mezzrow {
+	if venue == venueNames.Smalls || venue == venueNames.Mezzrow || venue == venueNames.Zinc {
 		parsedDate, err = time.Parse(venueDateFormats[venue], dateString+" "+currentYear)
 
 	}

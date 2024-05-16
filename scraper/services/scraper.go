@@ -118,6 +118,7 @@ var ScraperMap = map[string]ScraperFunc{
 	venueNames.Smoke:       Smoke,
 	venueNames.Ornithology: Ornithology,
 	venueNames.BlueNote:    BlueNote,
+	venueNames.Zinc:        Zinc,
 }
 
 func Scraper() {
