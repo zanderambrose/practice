@@ -10,9 +10,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-    title: "NextJS Tailwind Blog Posts Page",
-    description:
-        "Download Tailwind Blog Post Page, a free webpage template developed by Creative Tim. Based on Tailwind CSS and Material Tailwind, see the live demo on our site and elevate your blogging experience!",
+    title: "Whoshittin NYC",
+    description: "Explore the vibrant jazz scene of New York City with our comprehensive guide to tonight's live performances. Discover top-rated jazz clubs, view event schedules, and find your perfect night out.",
 };
 
 export default function RootLayout({
@@ -23,13 +22,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <link
-                    rel="stylesheet"
-                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-                    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
-                    crossOrigin="anonymous"
-                    referrerPolicy="no-referrer"
-                />
+                {/* TODO - Favicon */}
                 <link rel="shortcut icon" href="/favicon.png" type="image/png" />
             </head>
             <body className={roboto.className}>
