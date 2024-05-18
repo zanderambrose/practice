@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"errors"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,55 +12,72 @@ import (
 )
 
 type Client struct {
-	ClientId    string       `json:"clientId" bson:"clientId"`
-	ApiKey      string       `json:"apiKey" bson:"apiKey"`
-	Permissions []Permission `json:"permissions" bson:"permissions"`
+	ClientId    string     `json:"clientId" bson:"clientId"`
+	ApiKey      string     `json:"apiKey" bson:"apiKey"`
+	Permissions Permission `json:"permissions" bson:"permissions"`
 }
 
 type Permission struct {
-	Entry   string `json:"entry" bson:"entry"`
-	IsAdmin string `json:"isAdmin" bson:"isAdmin"`
+	IsAdmin bool `json:"isAdmin" bson:"isAdmin"`
 }
+
+var keyAuthMiddleware = keyauth.New(keyauth.Config{
+	ErrorHandler: func(c *fiber.Ctx, err error) error {
+		if err == keyauth.ErrMissingOrMalformedAPIKey {
+			return c.Status(fiber.StatusUnauthorized).SendString(err.Error())
+		}
+		if err == InvalidClientId {
+			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		}
+		if err == ResourceDenied {
+			return c.Status(fiber.StatusForbidden).SendString(err.Error())
+		}
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid or expired API Key")
+	},
+	Validator: validateAPIKey,
+})
+
+var ResourceDenied error = errors.New("permission denied for this resource")
+var InvalidClientId error = errors.New("invalid client_id")
 
 func queryClient(clientId string) (Client, error) {
 	var client Client
 	err := db.GetCollection("client").FindOne(db.CTX, bson.M{"clientId": clientId}).Decode(&client)
 	if err != nil {
-		fmt.Println("Error finding client")
-		return Client{}, errors.New("Error finding client")
+		return Client{}, InvalidClientId
 	}
 
 	return client, nil
 }
 
 func validateAPIKey(c *fiber.Ctx, token string) (bool, error) {
+	httpVerb := c.Method()
 	clientId := c.Get("X-Client-ID")
 
 	client, err := queryClient(clientId)
 	if err != nil {
-		return false, errors.New("Not a valid client id")
+		return false, err
 	}
 
-	dbKey := client.ApiKey
-	hashedAPIKey := sha256.Sum256([]byte(dbKey))
+	keyFromDb := client.ApiKey
+	hashedAPIKey := sha256.Sum256([]byte(keyFromDb))
 	hashedKey := sha256.Sum256([]byte(token))
-	if subtle.ConstantTimeCompare(hashedAPIKey[:], hashedKey[:]) == 1 {
-		return true, nil
+	if subtle.ConstantTimeCompare(hashedAPIKey[:], hashedKey[:]) != 1 {
+		return false, keyauth.ErrMissingOrMalformedAPIKey
+	}
+	isAdmin := client.Permissions.IsAdmin
+
+	if !isAdmin && httpVerb != "GET" {
+		return false, ResourceDenied
 	}
 
-	return false, keyauth.ErrMissingOrMalformedAPIKey
-}
-
-func validateRequest(c *fiber.Ctx, token string) (bool, error) {
 	return true, nil
 }
 
 func ApplyRoutes(app *fiber.App) {
 	app.Get("/api/v1/collections", handlers.ListCollections)
 
-	app.Use(keyauth.New(keyauth.Config{
-		Validator: validateRequest,
-	}))
+	app.Use(keyAuthMiddleware)
 
 	app.Get("/api/v1/:venue", handlers.GetVenueLineup)
 	app.Post("/api/v1/:venue", handlers.UpdateLineupV1)
