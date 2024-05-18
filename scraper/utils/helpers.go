@@ -20,20 +20,27 @@ type NormalizedEventTime struct {
 
 var CTX = context.Background()
 
-func PostVenueData(url string, postable interface{}) *http.Response {
-	venue := strings.ToLower(url)
+func PostVenueData(venueName string, postable interface{}) *http.Response {
+	venue := strings.ToLower(venueName)
+	url := fmt.Sprintf("http://server:8080/api/v1/%s", venue)
 	payload, err := json.Marshal(postable)
 	if err != nil {
 		// TODO - Log handling
 		fmt.Println("error on that marshal mathers", err)
 	}
-	// TODO - This needs env variable
-	resp, err := http.Post(fmt.Sprintf("http://server:8080/api/v1/%s", venue), "application/json", bytes.NewBuffer(payload))
-
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	if err != nil {
-		// TODO - Log handling
-		fmt.Println("error on that http req", err)
+		fmt.Println("Error creating request:", err)
 	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer admin")
+	req.Header.Set("X-Client-ID", "admin")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+	}
+	defer resp.Body.Close()
 
 	return resp
 }

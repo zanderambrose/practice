@@ -19,7 +19,8 @@ services:
     depends_on:
       - db
   db:
-    image: mongo:latest
+    image: mongo
+    restart: always
     ports:
       - "27017:27017"
     environment:
