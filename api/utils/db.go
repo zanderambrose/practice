@@ -55,16 +55,13 @@ func GetCollection(name string) *mongo.Collection {
 }
 
 func FilterCollectionResults(collections []string) []string {
-	var collectionsToExclude = []string{"client"}
+	var collectionsToExclude = map[string]bool{
+		"client": true,
+	}
 	var filteredCollections []string
 	for _, item := range collections {
-		shouldInclude := true
-		for _, itemToExclude := range collectionsToExclude {
-			if item == itemToExclude {
-				shouldInclude = false
-			}
-		}
-		if shouldInclude {
+		_, exists := collectionsToExclude[item]
+		if !exists {
 			filteredCollections = append(filteredCollections, item)
 		}
 	}

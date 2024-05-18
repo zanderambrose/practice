@@ -1,3 +1,4 @@
+// TODO - This needs env variable
 db = db.getSiblingDB('admin');
 
 db.auth("root", "examplepassword");
