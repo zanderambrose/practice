@@ -22,6 +22,7 @@ var CTX = context.Background()
 
 func PostVenueData(venueName string, postable interface{}) *http.Response {
 	venue := strings.ToLower(venueName)
+	// TODO - This needs env variable
 	url := fmt.Sprintf("http://server:8080/api/v1/%s", venue)
 	payload, err := json.Marshal(postable)
 	if err != nil {
@@ -33,7 +34,9 @@ func PostVenueData(venueName string, postable interface{}) *http.Response {
 		fmt.Println("Error creating request:", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	// TODO - This needs env variable
 	req.Header.Set("Authorization", "Bearer admin")
+	// TODO - This needs env variable
 	req.Header.Set("X-Client-ID", "admin")
 	client := &http.Client{}
 	resp, err := client.Do(req)
