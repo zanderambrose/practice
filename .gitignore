@@ -1,2 +1,11 @@
 tmp/
 **/node_modules
+whoshittin/next/
+whoshittin/out/
+# production
+whoshittin/build
+whoshittin/.next
+# misc
+whoshittin/public/.DS_Store
+whoshittin/.DS_Store
+package-lock.json
