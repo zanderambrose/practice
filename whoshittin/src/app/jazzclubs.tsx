@@ -10,7 +10,7 @@ import VenueCard from "@/components/venue-card";
 
 const venues = []
 
-export function Posts() {
+export function JazzClubs() {
     return (
         <section className="grid min-h-screen place-items-center p-8">
             <Tabs value="jazz" className="mx-auto max-w-7xl w-full mb-16 ">
@@ -42,4 +42,4 @@ export function Posts() {
     );
 }
 
-export default Posts;
+export default JazzClubs;
