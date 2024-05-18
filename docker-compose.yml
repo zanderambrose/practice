@@ -26,6 +26,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    volumes:
+            - ./auth-init.js:/docker-entrypoint-initdb.d/auth-init.js:ro
   frontend:
       build:
         context: .

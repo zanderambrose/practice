@@ -5,7 +5,7 @@ root = "."
 tmp_dir = "tmp"
 
 # Exclude directories. They should be relative to the root path.
-exclude_dir = ["./scraper/"]
+exclude_dir = ["./scraper/", "./whoshittin"]
 
 [build]
   # You can specify the environment variables required for your app.
