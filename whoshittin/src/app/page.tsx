@@ -1,12 +1,12 @@
 import { Footer } from "@/components";
 import Hero from "./hero";
-import Posts from "./posts";
+import JazzClubs from "./jazzclubs";
 
-export default function Campaign() {
+export default function App() {
     return (
         <>
             <Hero />
-            <Posts />
+            <JazzClubs />
             <Footer />
         </>
     );
