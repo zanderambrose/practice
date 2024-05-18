@@ -66,8 +66,10 @@ func ListCollections(c *fiber.Ctx) error {
 		})
 	}
 
+	filteredCollections := db.FilterCollectionResults(collections)
+
 	return c.JSON(fiber.Map{
-		"collections": collections,
+		"collections": filteredCollections,
 	})
 }
 

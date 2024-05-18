@@ -53,3 +53,20 @@ func GetCollection(name string) *mongo.Collection {
 	db := GetDatabase()
 	return db.Collection(name)
 }
+
+func FilterCollectionResults(collections []string) []string {
+	var collectionsToExclude = []string{"client"}
+	var filteredCollections []string
+	for _, item := range collections {
+		shouldInclude := true
+		for _, itemToExclude := range collectionsToExclude {
+			if item == itemToExclude {
+				shouldInclude = false
+			}
+		}
+		if shouldInclude {
+			filteredCollections = append(filteredCollections, item)
+		}
+	}
+	return filteredCollections
+}
