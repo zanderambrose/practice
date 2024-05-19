@@ -8,9 +8,11 @@ import {
 } from "@material-tailwind/react";
 import VenueCard from "@/components/venue-card";
 
-const venues = []
+interface IJazzClubsProps {
+    collections: string[]
+}
 
-export function JazzClubs() {
+export function JazzClubs({ collections }: IJazzClubsProps) {
     return (
         <section className="grid min-h-screen place-items-center p-8">
             <Tabs value="jazz" className="mx-auto max-w-7xl w-full mb-16 ">
@@ -23,19 +25,8 @@ export function JazzClubs() {
                 </div>
             </Tabs>
             <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-16 items-start lg:grid-cols-3">
-                {venues.map(({ img, tag, title, desc, date, author }) => (
-                    <VenueCard
-                        key={title}
-                        img={img}
-                        tag={tag}
-                        title={title}
-                        desc={desc}
-                        date={date}
-                        author={{
-                            img: author.img,
-                            name: author.name,
-                        }}
-                    />
+                {collections.map((collection) => (
+                    <VenueCard key={collection} collection={collection} />
                 ))}
             </div>
         </section>

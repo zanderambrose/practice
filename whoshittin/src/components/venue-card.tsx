@@ -10,22 +10,20 @@ import {
 
 
 interface VenueCardProps {
-    img: string;
-    tag: string;
-    title: string;
-    desc: string;
-    author: { name: string; img: string };
-    date: string;
+    collection: string
 }
 
-export function VenueCard({
-    img,
-    tag,
-    title,
-    desc,
-    author,
-    date,
-}: VenueCardProps) {
+const img = ""
+const title = ""
+const tag = ""
+const author = {
+    name: "",
+    img: ""
+}
+const date = ""
+const desc = ""
+
+export function VenueCard({ collection }: VenueCardProps) {
     return (
         <Card shadow={true}>
             <CardHeader>

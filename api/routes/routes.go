@@ -7,10 +7,8 @@ import (
 )
 
 func ApplyRoutes(app *fiber.App) {
-	app.Get("/api/v1/collections", handlers.ListCollections)
-
 	app.Use(middleware.KeyAuthMiddleware)
-
+	app.Get("/api/v1/collections", handlers.ListCollections)
 	app.Get("/api/v1/:venue", handlers.GetVenueLineup)
 	app.Post("/api/v1/:venue", handlers.UpdateLineupV1)
 	app.Delete("/api/v1/:venue", handlers.DeleteCollection)
