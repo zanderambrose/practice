@@ -7,37 +7,32 @@ import {
     CardBody,
     Avatar,
 } from "@material-tailwind/react";
+import { IVenue } from "@/utils/fetchJazzClubs";
 
 
 interface VenueCardProps {
-    collection: string
+    show: IVenue
 }
 
-const img = ""
-const title = ""
-const tag = ""
-const author = {
-    name: "",
-    img: ""
-}
-const date = ""
-const desc = ""
-
-export function VenueCard({ collection }: VenueCardProps) {
+export function VenueCard({ show }: VenueCardProps) {
+    const { eventImage, eventDate, eventLink, eventTime, eventTitle, band, venue } = show
+    console.log("eventLink: ", eventLink)
+    console.log("eventTime: ", eventTime)
+    console.log("band: ", band)
     return (
         <Card shadow={true}>
             <CardHeader>
                 <Image
                     width={768}
                     height={768}
-                    src={img}
-                    alt={title}
+                    src={eventImage}
+                    alt={venue}
                     className="h-full w-full scale-110 object-cover"
                 />
             </CardHeader>
             <CardBody className="p-6">
                 <Typography variant="small" color="blue" className="mb-2 !font-medium">
-                    {tag}
+                    {"supposed to be a tag????"}
                 </Typography>
                 <Typography
                     as="a"
@@ -46,17 +41,17 @@ export function VenueCard({ collection }: VenueCardProps) {
                     color="blue-gray"
                     className="mb-2 normal-case transition-colors hover:text-gray-900"
                 >
-                    {title}
+                    {eventTitle}
                 </Typography>
                 <Typography className="mb-6 font-normal !text-gray-500">
-                    {desc}
+                    {"supposed to be desc????"}
                 </Typography>
                 <div className="flex items-center gap-4">
                     <Avatar
                         size="sm"
                         variant="circular"
-                        src={author.img}
-                        alt={author.name}
+                        src={eventImage}
+                        alt={eventTitle}
                     />
                     <div>
                         <Typography
@@ -64,14 +59,14 @@ export function VenueCard({ collection }: VenueCardProps) {
                             color="blue-gray"
                             className="mb-0.5 !font-medium"
                         >
-                            {author.name}
+                            {venue}
                         </Typography>
                         <Typography
                             variant="small"
                             color="gray"
                             className="text-xs !text-gray-500 font-normal"
                         >
-                            {date}
+                            {eventDate.formattedDate}
                         </Typography>
                     </div>
                 </div>

@@ -1,3 +1,24 @@
+export interface IVenue {
+    band: {
+        instrument: string;
+        name: string;
+    }[]
+    currentTime: string;
+    eventDate: {
+        date: string;
+        formattedDate: string
+    }
+    eventImage: string
+    eventLink: string
+    eventTime: {
+        start: string
+        end: string
+    }[]
+    eventTitle: string
+    venue: string
+    _id: string
+}
+
 // TODO - This needs env variable
 const BASE_API_URL = "http://server:8080/api/v1"
 const AUTH_HEADERS = {
@@ -5,7 +26,18 @@ const AUTH_HEADERS = {
     "X-Client-ID": "admin"
 }
 
-export async function fetchJazzClubs() {
+const buildTodaysDateQueryParam = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    const formattedDate = year + '-' + month + '-' + day;
+    console.log("formattedDate: ", formattedDate)
+
+    return formattedDate;
+}
+
+export async function fetchJazzClubCollections() {
     const res = await fetch(`${BASE_API_URL}/collections`, {
         headers: {
             ...AUTH_HEADERS
@@ -21,6 +53,28 @@ export async function fetchJazzClubs() {
     return collections
 }
 
-// export async function fetchJazzClubDetail() {
-//     const collections = await fetchJazzClubs()
-// }
+export async function fetchJazzClubDetails() {
+    const dateString = buildTodaysDateQueryParam()
+    const collections: string[] = await fetchJazzClubCollections()
+    const fetchVenueDetails: Promise<Response>[] = []
+    const jazzClubsMap: Record<string, IVenue[]> = {}
+
+    for (const collection of collections) {
+        fetchVenueDetails.push(fetch(`${BASE_API_URL}/${collection}?date=${dateString}`, {
+            headers: {
+                ...AUTH_HEADERS
+            }
+        }))
+    }
+
+    const res = await Promise.all(fetchVenueDetails)
+
+    for (const response of res) {
+        const data: IVenue[] = await response.json()
+        if (data) {
+            jazzClubsMap[data[0].venue] = data
+        }
+    }
+
+    return jazzClubsMap
+}

@@ -6,10 +6,11 @@ import {
     TabsHeader,
     Tab,
 } from "@material-tailwind/react";
-import VenueCard from "@/components/venue-card";
+import VenueWrapper from "@/components/venue-wrapper";
+import { IVenue } from "@/utils/fetchJazzClubs";
 
 interface IJazzClubsProps {
-    collections: string[]
+    collections: Record<string, IVenue[]>
 }
 
 export function JazzClubs({ collections }: IJazzClubsProps) {
@@ -25,8 +26,8 @@ export function JazzClubs({ collections }: IJazzClubsProps) {
                 </div>
             </Tabs>
             <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-16 items-start lg:grid-cols-3">
-                {collections.map((collection) => (
-                    <VenueCard key={collection} collection={collection} />
+                {Object.values(collections).map((collection) => (
+                    <VenueWrapper key={collection[0]._id} shows={collection} />
                 ))}
             </div>
         </section>
