@@ -1,16 +1,54 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gocolly/colly"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"time"
 	"whoshittin/api/utils"
 	"whoshittin/scraper/services"
+	dateUtils "whoshittin/scraper/utils"
 )
 
+var MissingDateParam error = errors.New("missing date param")
+var InvalideDateFormat error = errors.New("malformed date param")
+
+func parseDateQueryParam(date string) (string, error) {
+	parsedDate, err := time.Parse(dateUtils.STANDARD_DATE_LAYOUT, date)
+	if err != nil {
+		return "", errors.New("unable to parse date param")
+	}
+	formattedDate := parsedDate.Format(dateUtils.STANDARD_DATE_REPRESENTATION_LAYOUT)
+
+	return formattedDate, nil
+}
+
+func validateDateQueryParam(c *fiber.Ctx) (string, error) {
+	dateParam := c.Query("date")
+
+	if len(dateParam) <= 0 {
+		return "", MissingDateParam
+	}
+
+	date, err := parseDateQueryParam(dateParam)
+	if err != nil {
+		return "", err
+	}
+
+	return date, nil
+}
+
 func GetVenueLineup(c *fiber.Ctx) error {
-	cursor, err := db.GetCollection(c.Params("venue")).Find(db.CTX, bson.M{})
+	venue := c.Params("venue")
+	date, err := validateDateQueryParam(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	filter := bson.M{"eventDate.formattedDate": date}
+
+	cursor, err := db.GetCollection(venue).Find(db.CTX, filter)
 	if err != nil {
 		fmt.Println("Error finding documents")
 	}
