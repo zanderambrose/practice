@@ -28,11 +28,18 @@ const AUTH_HEADERS = {
 
 const buildTodaysDateQueryParam = () => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    const formattedDate = year + '-' + month + '-' + day;
-    console.log("formattedDate: ", formattedDate)
+    const options = {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    };
+
+    const formatter = new Intl.DateTimeFormat('en-US', options as Intl.DateTimeFormatOptions);
+    const [{ value: month }, , { value: day }, , { value: year }] = formatter.formatToParts(today);
+
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log("formattedDate:", formattedDate);
 
     return formattedDate;
 }

@@ -20,58 +20,59 @@ export function VenueCard({ show }: VenueCardProps) {
     console.log("eventTime: ", eventTime)
     console.log("band: ", band)
     return (
-        <Card shadow={true}>
-            <CardHeader>
-                <Image
-                    width={768}
-                    height={768}
-                    src={eventImage}
-                    alt={venue}
-                    className="h-full w-full scale-110 object-cover"
-                />
-            </CardHeader>
-            <CardBody className="p-6">
-                <Typography variant="small" color="blue" className="mb-2 !font-medium">
-                    {"supposed to be a tag????"}
-                </Typography>
-                <Typography
-                    as="a"
-                    href="#"
-                    variant="h5"
-                    color="blue-gray"
-                    className="mb-2 normal-case transition-colors hover:text-gray-900"
-                >
-                    {eventTitle}
-                </Typography>
-                <Typography className="mb-6 font-normal !text-gray-500">
-                    {"supposed to be desc????"}
-                </Typography>
-                <div className="flex items-center gap-4">
-                    <Avatar
-                        size="sm"
-                        variant="circular"
+        <a href={eventLink} target="_blank">
+            <Card shadow={true} className="hover:scale-105">
+                <CardHeader style={{ margin: "0" }}>
+                    <Image
+                        width={768}
+                        height={768}
                         src={eventImage}
-                        alt={eventTitle}
+                        alt={venue}
+                        className="h-full w-full scale-110 object-cover"
                     />
-                    <div>
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="mb-0.5 !font-medium"
-                        >
-                            {venue}
-                        </Typography>
-                        <Typography
-                            variant="small"
-                            color="gray"
-                            className="text-xs !text-gray-500 font-normal"
-                        >
-                            {eventDate.formattedDate}
-                        </Typography>
+                </CardHeader>
+                <CardBody className="p-6">
+                    <Typography
+                        variant="h5"
+                        color="blue-gray"
+                        className="mb-2 normal-case transition-colors hover:text-gray-900"
+                    >
+                        {eventTitle}
+                    </Typography>
+                    <div className="container my-auto grid grid-cols-2 gap-4 items-start mb-6">
+                        {band?.map(({ name, instrument }) => (
+                            <Typography key={`band-member-${name}-${instrument}`} className="font-normal !text-gray-500">
+                                {name} - {instrument}
+                            </Typography>
+                        ))}
                     </div>
-                </div>
-            </CardBody>
-        </Card>
+                    <div className="flex items-center gap-4">
+                        <Avatar
+                            size="sm"
+                            variant="circular"
+                            src={eventImage}
+                            alt={eventTitle}
+                        />
+                        <div>
+                            <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="mb-0.5 !font-medium"
+                            >
+                                {venue}
+                            </Typography>
+                            <Typography
+                                variant="small"
+                                color="gray"
+                                className="text-xs !text-gray-500 font-normal"
+                            >
+                                {eventDate.formattedDate}
+                            </Typography>
+                        </div>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
     );
 }
 

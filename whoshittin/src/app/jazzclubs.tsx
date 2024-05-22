@@ -21,13 +21,12 @@ export function JazzClubs({ collections }: IJazzClubsProps) {
                     <TabsHeader className="h-10 !w-12/12 md:w-[50rem] border border-white/25 bg-opacity-90">
                         <Tab value="jazz">Jazz</Tab>
                         <Tab value="comedy">Comedy</Tab>
-                        <Tab value="theater">Theater</Tab>
                     </TabsHeader>
                 </div>
             </Tabs>
-            <div className="container my-auto grid grid-cols-1 gap-x-8 gap-y-16 items-start lg:grid-cols-3">
-                {Object.values(collections).map((collection) => (
-                    <VenueWrapper key={collection[0]._id} shows={collection} />
+            <div className="container flex flex-col gap-8">
+                {Object.values(collections).map((venue) => (
+                    <VenueWrapper key={venue[0]._id} shows={venue} venueName={venue[0].venue} />
                 ))}
             </div>
         </section>
