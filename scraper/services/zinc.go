@@ -14,10 +14,6 @@ func Zinc(c *colly.Collector) {
 				return
 			}
 			container.ForEach("div.edgtf-el-item", func(idx int, item *colly.HTMLElement) {
-				// FOR DEVELOPMENT ONLY
-				if idx > 0 {
-					return
-				}
 				var eventData EventInfo
 				eventData.AppendVenue(venueNames.Zinc)
 				eventData.AppendCurrentTime()
