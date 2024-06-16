@@ -2,11 +2,12 @@ package scraper
 
 import (
 	"github.com/gocolly/colly"
+	"sync"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
 
-func BlueNote(c *colly.Collector) {
+func BlueNote(c *colly.Collector, w *sync.WaitGroup) {
 	c.OnHTML("div.inner", func(e *colly.HTMLElement) {
 		dayOfTheMonth := e.ChildText("div.day")
 		e.ForEach("div.day-wrap", func(_ int, item *colly.HTMLElement) {
@@ -31,6 +32,7 @@ func BlueNote(c *colly.Collector) {
 		})
 	})
 	c.Visit("https://www.bluenotejazz.com/nyc/shows/?calendar_view")
+	defer w.Done()
 }
 
 func findEventImage(eventData *EventInfo, visitUrl string) {

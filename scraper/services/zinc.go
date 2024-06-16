@@ -2,12 +2,12 @@ package scraper
 
 import (
 	"github.com/gocolly/colly"
-	// "strings"
+	"sync"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
 
-func Zinc(c *colly.Collector) {
+func Zinc(c *colly.Collector, w *sync.WaitGroup) {
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 		e.ForEach("div.edgtf-row-grid-section-wrapper", func(idx int, container *colly.HTMLElement) {
 			if idx == 0 {
@@ -30,6 +30,7 @@ func Zinc(c *colly.Collector) {
 		})
 	})
 	c.Visit("https://www.zincbar.com/shows/")
+	defer w.Done()
 }
 
 func visitEventDetails(eventData *EventInfo, visitUrl string) {

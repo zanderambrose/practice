@@ -4,11 +4,12 @@ import (
 	"github.com/gocolly/colly"
 	"regexp"
 	"strings"
+	"sync"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
 
-func Smoke(c *colly.Collector) {
+func Smoke(c *colly.Collector, w *sync.WaitGroup) {
 	c.OnHTML("div.details.border-b", func(e *colly.HTMLElement) {
 		var eventData EventInfo
 		eventData.AppendVenue(venueNames.Smoke)
@@ -45,5 +46,5 @@ func Smoke(c *colly.Collector) {
 		utils.PostVenueData(venueNames.Smoke, eventData)
 	})
 	c.Visit("https://tickets.smokejazz.com/")
-
+	defer w.Done()
 }

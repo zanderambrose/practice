@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"strings"
+	"sync"
 	"whoshittin/scraper/utils"
 )
 
-func SmallsLiveScraper(c *colly.Collector) {
+func SmallsLiveScraper(c *colly.Collector, w *sync.WaitGroup) {
 	c.OnHTML("article.event-display-today-and-tomorrow", func(e *colly.HTMLElement) {
 		var eventData EventInfo
 
@@ -67,6 +68,7 @@ func SmallsLiveScraper(c *colly.Collector) {
 	})
 
 	c.Visit("https://www.smallslive.com/")
+	defer w.Done()
 }
 
 func getEventDetails(details []string, target int) (string, error) {

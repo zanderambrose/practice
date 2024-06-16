@@ -3,13 +3,14 @@ package scraper
 import (
 	"github.com/gocolly/colly"
 	"strings"
+	"sync"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
 
 const visitUrl = "https://www.ornithologyjazzclub.com/events-2"
 
-func Ornithology(c *colly.Collector) {
+func Ornithology(c *colly.Collector, w *sync.WaitGroup) {
 	instrumentMap := map[string]string{
 		"b":         "bass",
 		"p":         "piano",
@@ -64,6 +65,7 @@ func Ornithology(c *colly.Collector) {
 		utils.PostVenueData(venueNames.Ornithology, eventData)
 	})
 	c.Visit(visitUrl)
+	defer w.Done()
 }
 
 func appendEventTime(title string, eventData *EventInfo) {

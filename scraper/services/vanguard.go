@@ -5,6 +5,7 @@ import (
 	"github.com/gocolly/colly"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
@@ -32,7 +33,7 @@ func (vanguardEvent *VanguardEventInfo) PostVanguardData(eventDate string) {
 const performanceTime = "8:00 PM & 10:00 PM"
 const vanguardJazzOrchestra = "VANGUARD JAZZ ORCHESTRA"
 
-func Vanguard(c *colly.Collector) {
+func Vanguard(c *colly.Collector, w *sync.WaitGroup) {
 	c.OnHTML("div.container", func(e *colly.HTMLElement) {
 		var eventData VanguardEventInfo
 		eventTitle := e.ChildText("div.event-details > h2")
@@ -67,6 +68,7 @@ func Vanguard(c *colly.Collector) {
 	})
 
 	c.Visit("https://villagevanguard.com/")
+	defer w.Done()
 }
 
 func replaceWhitespace(input string) string {

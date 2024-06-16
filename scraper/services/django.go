@@ -3,31 +3,26 @@ package scraper
 import (
 	"github.com/gocolly/colly"
 	"strings"
+	"sync"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
 )
 
-func Django(c *colly.Collector) {
+func Django(c *colly.Collector, w *sync.WaitGroup) {
 	c.OnHTML("article.event_card", func(e *colly.HTMLElement) {
-		var earlyEventData EventInfo
-		var lateEventData EventInfo
-		earlyEventData.AppendVenue(venueNames.Django)
-		lateEventData.AppendVenue(venueNames.Django)
-		earlyEventData.AppendCurrentTime()
-		lateEventData.AppendCurrentTime()
-		parts := strings.Split(e.ChildText("p.event__info"), "\n")
-		earlyEventData.AppendEventDate(parts[0])
-		earlyEventData.AppendEventTime(parts[2])
-		lateEventData.AppendEventDate(parts[0])
-		lateEventData.AppendEventTime(parts[2])
-		earlyEventData.AppendEventTitle(e.ChildText("h3"))
-		earlyEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
-		earlyEventData.AppendEventImage(e.ChildAttr("img", "src"))
-		utils.PostVenueData(venueNames.Django, earlyEventData)
-		lateEventData.AppendEventTitle(e.ChildText("h3"))
-		lateEventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
-		lateEventData.AppendEventImage(e.ChildAttr("img", "src"))
-		utils.PostVenueData(venueNames.Django, lateEventData)
+		var eventData EventInfo
+		eventData.AppendVenue(venueNames.Django)
+		eventData.AppendCurrentTime()
+		eventDate := e.ChildText("p.event__date")
+		eventData.AppendEventDate(eventDate)
+		eventData.AppendEventTitle(e.ChildText("h3"))
+		eventData.AppendEventLink(e.ChildAttr("a.details-container", "href"))
+		eventData.AppendEventImage(e.ChildAttr("img", "src"))
+		times := e.ChildText("p.event_card__time-pair")
+		eventTimes := strings.Replace(times, "|", "&", 1)
+		eventData.AppendEventTime(eventTimes)
+		utils.PostVenueData(venueNames.Django, &eventData)
 	})
 	c.Visit("https://www.thedjangonyc.com/events")
+	defer w.Done()
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"sync"
 	"time"
 	"whoshittin/api/utils"
 	"whoshittin/scraper/services"
@@ -112,12 +113,14 @@ func ListCollections(c *fiber.Ctx) error {
 }
 
 func ScrapeVenue(c *fiber.Ctx) error {
+	var w sync.WaitGroup
 	venue := c.Params("venue")
 	scraperFunc := scraper.ScraperMap[venue]
 
 	collector := colly.NewCollector()
-	scraperFunc(collector)
-
+	w.Add(1)
+	scraperFunc(collector, &w)
+	w.Wait()
 	return c.SendStatus(fiber.StatusNoContent)
 }
 

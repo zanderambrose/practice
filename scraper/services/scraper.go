@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"strings"
+	"sync"
 	"time"
 	"whoshittin/scraper/utils"
 	"whoshittin/scraper/venueNames"
@@ -66,7 +67,7 @@ func (data *EventInfo) AppendEventTime(setTime string) {
 	} else {
 		parsedStartTime, err := utils.ParseTimeString(setTime)
 		if err != nil {
-			fmt.Println("error formatting sing time")
+			fmt.Println("error formatting string time")
 		}
 		parsedEndTime := parsedStartTime.Add(time.Hour + 15*time.Minute)
 		newTime.Start = utils.FormatTimeString(parsedStartTime)
@@ -108,7 +109,7 @@ func (data *EventInfo) AppendCurrentTime() {
 	data.CurrentTime = time
 }
 
-type ScraperFunc func(*colly.Collector)
+type ScraperFunc func(*colly.Collector, *sync.WaitGroup)
 
 var ScraperMap = map[string]ScraperFunc{
 	venueNames.Smalls:      SmallsLiveScraper,
@@ -123,8 +124,12 @@ var ScraperMap = map[string]ScraperFunc{
 
 func Scraper() {
 	c := colly.NewCollector()
+	var w sync.WaitGroup
 	for key := range ScraperMap {
+		w.Add(1)
 		scraperFunc := ScraperMap[key]
-		scraperFunc(c)
+		scraperFunc(c, &w)
 	}
+
+	w.Wait()
 }
